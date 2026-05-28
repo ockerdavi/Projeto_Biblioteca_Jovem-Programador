@@ -1,0 +1,220 @@
+:root {
+    --bg-main: #13382c;
+    --bg-card: #ebdcb9;
+    --bg-input: #e6d5ae;
+    --text-dark: #13382c;
+    --text-muted: #8c826e;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+
+.title-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #ebdcb9;
+}
+
+.title-container h1 {
+    font-family: 'Georgia', serif;
+    font-size: 32px;
+    font-weight: normal;
+}
+
+.badge {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ebdcb9;
+    padding: 5px 14px;
+    border-radius: 15px;
+    font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+.card {
+    background-color: var(--bg-card);
+    border-radius: 24px;
+    padding: 35px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+
+.card h2 {
+    font-family: 'Georgia', serif;
+    font-size: 22px;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+    font-weight: normal;
+}
+
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+.input-group label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
+.input-group input {
+    background-color: var(--bg-input);
+    border: none;
+    outline: none;
+    padding: 16px 20px;
+    border-radius: 16px;
+    color: var(--text-dark);
+    font-size: 14px;
+    width: 100%;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.08),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.5);
+    transition: box-shadow 0.2s ease;
+}
+
+.input-group input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+
+.button-container {
+    margin-top: 10px;
+}
+
+.btn-save {
+    background-color: var(--text-dark);
+    color: var(--bg-card);
+    border: none;
+    padding: 16px;
+    width: 100%;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-save:hover {
+    background-color: #1a4d3d;
+}
+
+.btn-save:active {
+    transform: scale(0.99);
+}
+
+
+.table-container {
+    width: 100%;
+}
+
+.books-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+    margin-top: -12px;
+}
+
+.books-table th {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: bold;
+    padding: 0 20px;
+    letter-spacing: 0.5px;
+}
+
+
+.books-table tbody tr {
+    background-color: var(--bg-input);
+    box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.06),
+        inset -3px -3px 5px rgba(255, 255, 255, 0.5);
+}
+
+.books-table td {
+    padding: 18px 20px;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+
+.books-table tbody tr td:first-child {
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.books-table tbody tr td:last-child {
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.font-serif {
+    font-family: 'Georgia', serif;
+}
+
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+}
