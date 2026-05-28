@@ -35,7 +35,7 @@ public class LivroService {
 
     public Livro buscarPorId(Long id) {
 
-        return repository.findByid(id)
+        return repository.findById(id)
         .orElseThrow(() ->
 
             new RuntimeException("Livro não encontrado com id: " + id));
@@ -43,6 +43,6 @@ public class LivroService {
 }
 
 public void deletar(Long id) {
-    repository.deleteByid(id);
+    repository.deleteById(id);
 }
 }
