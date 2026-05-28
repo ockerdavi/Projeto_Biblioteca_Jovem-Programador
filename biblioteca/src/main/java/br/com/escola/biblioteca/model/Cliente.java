@@ -1,4 +1,4 @@
-package main.java.br.com.escola.biblioteca.model;
+package br.com.escola.biblioteca.model;
 
 import jakarta.persistence.*; 
 import lombok.*;
