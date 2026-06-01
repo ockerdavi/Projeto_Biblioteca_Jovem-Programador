@@ -5,16 +5,14 @@ import lombok.*;
 
 @Entity
 @Table(name = "livros")
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Livro {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String titulo;
