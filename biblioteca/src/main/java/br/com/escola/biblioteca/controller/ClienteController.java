@@ -1,7 +1,7 @@
 package br.com.escola.biblioteca.controller;
 
 import br.com.escola.biblioteca.model.Cliente;
-/*aqui teria que colocar cliente service (verificar) */
+/*aqui teria que colocar cliente service ddd (verificar) */
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
