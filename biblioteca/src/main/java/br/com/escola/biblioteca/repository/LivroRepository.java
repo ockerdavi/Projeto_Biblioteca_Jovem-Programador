@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LivroRepository extends JpaRepository<Livro, Long> {
+    // Pronto! O Spring Data JPA já fornece os métodos de salvar, buscar, etc.
 }

@@ -1,4 +1,5 @@
 package br.com.escola.biblioteca.service;
+package br.com.escola.biblioteca.service;
 
 import br.com.escola.biblioteca.model.Livro;
 import br.com.escola.biblioteca.repository.LivroRepository;
@@ -8,7 +9,6 @@ import java.util.List;
 
 @Service
 public class LivroService {
-
     private final LivroRepository repository;
 
     public LivroService(LivroRepository repository) {
@@ -22,7 +22,7 @@ public class LivroService {
         return repository.save(livro);
     }
 
-    public List<Livro> listaTodos() {
+    public List<Livro> listarTodos() {
         return repository.findAll();
     }
 
