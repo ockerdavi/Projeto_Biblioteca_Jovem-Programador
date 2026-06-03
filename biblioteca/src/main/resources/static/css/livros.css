@@ -125,6 +125,7 @@ body {
 
 }
 
+
 .button-container { display: flex; gap: 10px; margin-top: 10px; }
 .btn-save { background-color: var(--text-dark); color: var(--bg-card); border: none; padding: 16px; border-radius: 14px; font-size: 14px; font-weight: bold; cursor: pointer; flex: 1; transition: 0.2s ease; }
 .btn-save:hover { background-color: #1a4d3d; }
