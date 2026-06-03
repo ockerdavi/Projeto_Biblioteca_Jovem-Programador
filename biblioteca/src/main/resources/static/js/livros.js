@@ -69,8 +69,11 @@ async function salvarLivro() {
         titulo, 
         autor, 
         isbn, 
-        categoria, 
-        quantidade
+        categoria,
+        quantidadeTotal,
+        quantidadeDisponivel,
+        quantidadeAlugada,
+        quantidadeRepetida
     };
 
     try {
