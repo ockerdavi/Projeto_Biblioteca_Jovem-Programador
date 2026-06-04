@@ -87,15 +87,7 @@ public class LivroController {
      * @DeleteMapping: Requisição HTTP DELETE para remover o registro
      * @PathVariable: Captura o ID do livro a ser deletado
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        try {
-            service.deletar(id);
-            return ResponseEntity.noContent().build(); // 204 - No Content
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build(); // 404 - Not Found
-        }
-    }
+    
 
     // GET /api/livros/{id} - Buscar por ID
     @GetMapping("/{id}")
