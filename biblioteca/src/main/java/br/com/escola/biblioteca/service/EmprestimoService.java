@@ -92,18 +92,26 @@ public class EmprestimoService {
     
     @Transactional
     public Emprestimo devolver(Long id) {
+        return devolver(id, null);
+    }
+
+    @Transactional
+    public Emprestimo devolver(Long id, LocalDate dataEntrega) {
         Emprestimo emprestimo = buscarPorId(id);
-        
+
         if ("DEVOLVIDO".equals(emprestimo.getStatus()) || "DEVOLVIDO_COM_MULTA".equals(emprestimo.getStatus())) {
             throw new RuntimeException("Este empréstimo já foi devolvido");
         }
-        
+
+        // Usar a data fornecida se existir, senão usar a data atual
+        LocalDate dataRealEntrega = dataEntrega != null ? dataEntrega : LocalDate.now();
+
         // Atualizar data de devolução real
-        emprestimo.setDataEntrega(LocalDate.now());
-        
+        emprestimo.setDataEntrega(dataRealEntrega);
+
         // Calcular multa se houver atraso
-        if (LocalDate.now().isAfter(emprestimo.getDataPrevistaEntrega())) {
-            long diasAtraso = ChronoUnit.DAYS.between(emprestimo.getDataPrevistaEntrega(), LocalDate.now());
+        if (dataRealEntrega.isAfter(emprestimo.getDataPrevistaEntrega())) {
+            long diasAtraso = ChronoUnit.DAYS.between(emprestimo.getDataPrevistaEntrega(), dataRealEntrega);
             BigDecimal multaCalculada = emprestimo.getValorMultaDiaria().multiply(new BigDecimal(diasAtraso));
             emprestimo.setMulta(multaCalculada);
             emprestimo.setStatus("DEVOLVIDO_COM_MULTA");
@@ -111,19 +119,19 @@ public class EmprestimoService {
             emprestimo.setMulta(BigDecimal.ZERO);
             emprestimo.setStatus("DEVOLVIDO");
         }
-        
+
         // Atualizar quantidades do livro
         Livro livro = emprestimo.getLivro();
         livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() + 1);
         livro.setQuantidadeAlugada(livro.getQuantidadeAlugada() - 1);
-        
+
         // Incrementar quantidade repetida se for reincidente
         if (emprestimo.getStatus().equals("DEVOLVIDO_COM_MULTA")) {
             livro.setQuantidadeRepetida((livro.getQuantidadeRepetida() != null ? livro.getQuantidadeRepetida() : 0) + 1);
         }
-        
+
         livroRepository.save(livro);
-        
+
         return repository.save(emprestimo);
     }
     
@@ -163,4 +171,91 @@ public class EmprestimoService {
         BigDecimal totalMultas = repository.sumMultaByClienteId(clienteId);
         return totalMultas != null ? totalMultas : BigDecimal.ZERO;
     }
+
+
+    // Adicione este método no EmprestimoService
+@Transactional
+public Emprestimo atualizar(Long id, Emprestimo emprestimoAtualizado) {
+    // Buscar o empréstimo existente
+    Emprestimo emprestimoExistente = buscarPorId(id);
+    
+    // Verificar se o empréstimo já foi devolvido
+    if ("DEVOLVIDO".equals(emprestimoExistente.getStatus()) || 
+        "DEVOLVIDO_COM_MULTA".equals(emprestimoExistente.getStatus())) {
+        throw new RuntimeException("Não é possível alterar um empréstimo já devolvido");
+    }
+    
+    // Verificar se o livro foi alterado
+    if (!emprestimoExistente.getLivro().getId().equals(emprestimoAtualizado.getLivro().getId())) {
+        // Verificar se o novo livro existe
+        Livro novoLivro = livroRepository.findById(emprestimoAtualizado.getLivro().getId())
+            .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        
+        // Verificar disponibilidade do novo livro
+        if (novoLivro.getQuantidadeDisponivel() == null || novoLivro.getQuantidadeDisponivel() <= 0) {
+            throw new RuntimeException("Novo livro não está disponível");
+        }
+        
+        // Devolver o livro antigo
+        Livro livroAntigo = emprestimoExistente.getLivro();
+        livroAntigo.setQuantidadeDisponivel(livroAntigo.getQuantidadeDisponivel() + 1);
+        livroAntigo.setQuantidadeAlugada(livroAntigo.getQuantidadeAlugada() - 1);
+        livroRepository.save(livroAntigo);
+        
+        // Pegar o novo livro
+        novoLivro.setQuantidadeDisponivel(novoLivro.getQuantidadeDisponivel() - 1);
+        novoLivro.setQuantidadeAlugada((novoLivro.getQuantidadeAlugada() != null ? novoLivro.getQuantidadeAlugada() : 0) + 1);
+        livroRepository.save(novoLivro);
+        
+        emprestimoExistente.setLivro(novoLivro);
+    }
+    
+    // Verificar se o cliente foi alterado
+    if (!emprestimoExistente.getCliente().getId().equals(emprestimoAtualizado.getCliente().getId())) {
+        Cliente novoCliente = clienteRepository.findById(emprestimoAtualizado.getCliente().getId())
+            .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        emprestimoExistente.setCliente(novoCliente);
+    }
+    
+    // Atualizar outros campos
+    if (emprestimoAtualizado.getDataEmprestimo() != null) {
+        emprestimoExistente.setDataEmprestimo(emprestimoAtualizado.getDataEmprestimo());
+    }
+    
+    if (emprestimoAtualizado.getDataPrevistaEntrega() != null) {
+        emprestimoExistente.setDataPrevistaEntrega(emprestimoAtualizado.getDataPrevistaEntrega());
+    }
+    
+    if (emprestimoAtualizado.getDataEntrega() != null) {
+        emprestimoExistente.setDataEntrega(emprestimoAtualizado.getDataEntrega());
+    }
+    
+    if (emprestimoAtualizado.getDiasPermitidos() != null) {
+        emprestimoExistente.setDiasPermitidos(emprestimoAtualizado.getDiasPermitidos());
+        // Recalcular data prevista se necessário
+        if (emprestimoAtualizado.getDataPrevistaEntrega() == null) {
+            emprestimoExistente.setDataPrevistaEntrega(
+                emprestimoExistente.getDataEmprestimo().plusDays(emprestimoAtualizado.getDiasPermitidos())
+            );
+        }
+    }
+    
+    if (emprestimoAtualizado.getStatus() != null) {
+        emprestimoExistente.setStatus(emprestimoAtualizado.getStatus());
+    }
+    
+    if (emprestimoAtualizado.getMulta() != null) {
+        emprestimoExistente.setMulta(emprestimoAtualizado.getMulta());
+    }
+    
+    if (emprestimoAtualizado.getValorMultaDiaria() != null) {
+        emprestimoExistente.setValorMultaDiaria(emprestimoAtualizado.getValorMultaDiaria());
+    }
+    
+    return repository.save(emprestimoExistente);
+}
+
+
+
+
 }
