@@ -42,6 +42,7 @@ async function listarClientes() {
                 <td class="text-left">${cliente.email || ""}</td>
                 <td class="text-center bold">${cliente.cep || ""}</td>
                 <td class="text-left">${endereco}</td>
+                <td class="text-left">${cliente.referencia || ""}</td>
                 <td class="text-center">
                     <div class="action-buttons">
                         <button class="btn-action btn-edit" onclick="editarCliente('${cliente.id}')">Editar</button>
