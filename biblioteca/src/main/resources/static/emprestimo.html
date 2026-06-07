@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emprestimos Biblioteca</title>
+    <link rel="stylesheet" href="./css/emprestimo.css">
+</head>
+<body>
+
+    <main class="container">
+        <!-- Cabecalho da pagina e contador de emprestimos -->
+        <div class="title-container">
+            <h1 id="titulo-pagina">Emprestimos Biblioteca</h1>
+            <span id="badge-total" class="badge">Emprestimos - 0 registros</span>
+        </div>
+
+        <!-- Formulario de registro de emprestimo -->
+        <section class="card">
+            <h2 id="titulo-form">Registrar Emprestimo</h2>
+            <form id="form-emprestimo" class="form-grid">
+                <div class="input-group">
+                    <label for="cliente">Cliente</label>
+                    <select id="cliente" required>
+                        <option value="">Selecione um cliente</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="livro">Livro</label>
+                    <select id="livro" required>
+                        <option value="">Selecione um livro</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="dias-permitidos">Dias permitidos</label>
+                    <input type="number" id="dias-permitidos" placeholder="Dias permitidos" required min="1" value="7">
+                </div>
+
+                <div class="input-group">
+                    <label for="valor-multa-diaria">Multa diaria</label>
+                    <input type="number" id="valor-multa-diaria" placeholder="Multa diaria" required min="0" step="0.01" value="2.00">
+                </div>
+
+                <div class="button-container full-width">
+                    <button type="submit" id="btn-salvar" class="btn-save">Registrar Emprestimo</button>
+                    <button type="button" id="btn-limpar" class="btn-cancel" onclick="resetarFormulario()">Limpar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Tabela com os emprestimos registrados -->
+        <section class="card">
+            <h2>Emprestimos</h2>
+            <div class="table-container">
+                <table id="tabela-emprestimos" class="books-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-left">CLIENTE</th>
+                            <th class="text-left">LIVRO</th>
+                            <th class="text-center">DATA</th>
+                            <th class="text-center">PREVISAO</th>
+                            <th class="text-center">ENTREGA</th>
+                            <th class="text-center">DIAS</th>
+                            <th class="text-center">STATUS</th>
+                            <th class="text-center">MULTA</th>
+                            <th class="text-center">MULTA DIARIA</th>
+                            <th class="text-center">ACOES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="./js/emprestimo.js"></script>
+</body>
+</html>
