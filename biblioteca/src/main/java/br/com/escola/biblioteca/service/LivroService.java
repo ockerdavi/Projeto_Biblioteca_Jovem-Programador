@@ -38,12 +38,18 @@ public class LivroService {
         livroExistente.setIsbn(livroAtualizado.getIsbn());
         livroExistente.setAutor(livroAtualizado.getAutor());
         livroExistente.setCategoria(livroAtualizado.getCategoria());
-        livroExistente.setQuantidadeTotal(livroAtualizado.getQuantidadeTotal());
+        int quantidadeAlugada = livroExistente.getQuantidadeAlugada() != null
+                ? livroExistente.getQuantidadeAlugada()
+                : 0;
+        int novaQuantidadeTotal = livroAtualizado.getQuantidadeTotal() != null
+                ? livroAtualizado.getQuantidadeTotal()
+                : 0;
+
+        livroExistente.setQuantidadeTotal(novaQuantidadeTotal);
         
         // Recalcula disponível baseado na nova quantidade total
-        int emprestados = livroExistente.getQuantidadeTotal() - livroExistente.getQuantidadeDisponivel();
-        livroExistente.setQuantidadeDisponivel(livroAtualizado.getQuantidadeTotal() - emprestados);
-        livroExistente.setQuantidadeRepetida(livroAtualizado.getQuantidadeTotal());
+        livroExistente.setQuantidadeDisponivel(Math.max(novaQuantidadeTotal - quantidadeAlugada, 0));
+        livroExistente.setQuantidadeRepetida(novaQuantidadeTotal);
         
         return repository.save(livroExistente);
     }

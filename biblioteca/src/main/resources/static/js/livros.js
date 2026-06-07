@@ -1,5 +1,5 @@
 // Altere esta URL para o endereço real da API do grupo de Back-End
-const API_URL = "http://localhost:3000/livros"; 
+const API_URL = "/api/livros";
 
 const formLivro = document.getElementById('form-livro');
 const tabelaLivrosBody = document.querySelector('#tabela-livros tbody');
@@ -31,8 +31,8 @@ async function listarLivros() {
 
         livros.forEach(livro => {
             // Garante tratamento se a propriedade vier com nome diferente do Back-end
-            const qtdDisponivel = livro.disponiveis !== undefined ? livro.disponiveis : (livro.quantidade || 0);
-            const qtdAlugados = livro.alugados !== undefined ? livro.alugados : 0;
+            const qtdDisponivel = livro.quantidadeDisponivel ?? livro.disponiveis ?? livro.quantidade ?? 0;
+            const qtdAlugados = livro.quantidadeAlugada ?? livro.alugados ?? 0;
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -62,7 +62,7 @@ async function salvarLivro() {
     const autor = document.getElementById("autor").value;
     const isbn = document.getElementById("isbn").value;
     const categoria = document.getElementById("categoria").value;
-    const quantidade = Number(document.getElementById("quantidade").value);
+    const quantidadeTotal = Number(document.getElementById("quantidade").value);
 
     // DADOS FORMATADOS: Alinhados com os inputs existentes no HTML atual
     const dadosLivro = { 
@@ -70,10 +70,7 @@ async function salvarLivro() {
         autor, 
         isbn, 
         categoria,
-        quantidadeTotal,
-        quantidadeDisponivel,
-        quantidadeAlugada,
-        quantidadeRepetida
+        quantidadeTotal
     };
 
     try {
@@ -116,7 +113,7 @@ async function editarLivro(id) {
         document.getElementById("autor").value = livro.autor;
         document.getElementById("isbn").value = livro.isbn;
         document.getElementById("categoria").value = livro.categoria || "";
-        document.getElementById("quantidade").value = livro.quantidade || livro.quantidadeTotal || "";
+        document.getElementById("quantidade").value = livro.quantidadeTotal || livro.quantidade || "";
         
         if (document.getElementById('titulo-form')) document.getElementById('titulo-form').innerText = 'Atualizar Livro';
         if (document.getElementById('btn-salvar')) document.getElementById('btn-salvar').innerText = 'Atualizar';
