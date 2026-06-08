@@ -18,7 +18,6 @@ public class LivroService {
     public Livro salvar(Livro livro) {
         livro.setQuantidadeDisponivel(livro.getQuantidadeTotal());
         livro.setQuantidadeAlugada(0);
-        livro.setQuantidadeRepetida(livro.getQuantidadeTotal());
         return repository.save(livro);
     }
 
@@ -43,7 +42,7 @@ public class LivroService {
         // Recalcula disponível baseado na nova quantidade total
         int emprestados = livroExistente.getQuantidadeTotal() - livroExistente.getQuantidadeDisponivel();
         livroExistente.setQuantidadeDisponivel(livroAtualizado.getQuantidadeTotal() - emprestados);
-        livroExistente.setQuantidadeRepetida(livroAtualizado.getQuantidadeTotal());
+      
         
         return repository.save(livroExistente);
     }
