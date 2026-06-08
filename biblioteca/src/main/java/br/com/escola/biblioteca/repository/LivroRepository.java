@@ -29,9 +29,7 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
     
     // Buscar livros mais alugados
     List<Livro> findByOrderByQuantidadeAlugadaDesc();
-    
-    // Buscar livros com maior quantidade repetida (reincidência)
-    List<Livro> findByOrderByQuantidadeRepetidaDesc();
+     
     
     // Buscar por quantidade total maior que
     List<Livro> findByQuantidadeTotalGreaterThan(Integer quantidade);
