@@ -125,6 +125,11 @@ public class EmprestimoService {
         livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() + 1);
         livro.setQuantidadeAlugada(livro.getQuantidadeAlugada() - 1);
 
+        // Incrementar quantidade repetida se for reincidente
+        if (emprestimo.getStatus().equals("DEVOLVIDO_COM_MULTA")) {
+            livro.setQuantidadeRepetida((livro.getQuantidadeRepetida() != null ? livro.getQuantidadeRepetida() : 0) + 1);
+        }
+
         livroRepository.save(livro);
 
         return repository.save(emprestimo);
