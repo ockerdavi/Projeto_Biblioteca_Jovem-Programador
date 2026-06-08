@@ -1,0 +1,77 @@
+<header class="cabecalho-sistema">
+    <div class="titulo-container">
+        <h1 class="titulo-principal">Gerenciamento de Devoluções</h1>
+        <span class="badge-registros">2 pendências</span>
+        <link rel="stylesheet" href="./css/devolucao.css">
+    </div>
+    <button class="btn-voltar" onclick="window.history.back()">Voltar ao Dashboard</button>
+</header>
+
+<main class="container-principal">
+    <section class="card-estilizado">
+        <h2 class="card-titulo">Registrar Devolução</h2>
+
+        <form id="form-devolucao" action="#" method="POST">
+            <div class="linha-form linha-unica">
+                <div class="grupo-input">
+                    <label for="codigo-livro">CÓDIGO DO EMPRÉSTIMO OU ISBN</label>
+                    <input type="text" id="codigo-livro" placeholder="Ex: 978-3-16-148410-0" required>
+                </div>
+            </div>
+
+            <div class="linha-form">
+                <div class="grupo-input">
+                    <label for="data-devolucao">DATA DA DEVOLUÇÃO</label>
+                    <input type="date" id="data-devolucao" required>
+                </div>
+                <div class="grupo-input">
+                    <label for="estado-conservacao">ESTADO DO EXEMPLAR</label>
+                    <select id="estado-conservacao" required>
+                        <option value="perfeito">Perfeito Estado</option>
+                        <option value="avarias-leves">Avarias Leves</option>
+                        <option value="danificado">Danificado (Gerar Multa)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-acao-principal">Confirmar Devolução</button>
+        </form>
+    </section>
+
+    <section class="card-estilizado">
+        <h2 class="card-titulo">Multas Ativas (Modo Local)</h2>
+
+        <div class="tabela-responsiva">
+            <table class="tabela-dados">
+                <thead>
+                    <tr>
+                        <th>ID EMPRÉSTIMO</th>
+                        <th>TÍTULO DO LIVRO</th>
+                        <th>USUÁRIO</th>
+                        <th>DIAS ATRASO</th>
+                        <th>VALOR DA MULTA</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#1042</td>
+                        <td>O Senhor dos Anéis</td>
+                        <td>João Pedro Silva</td>
+                        <td>12 dias</td>
+                        <td class="valor-multa">R$ 24,00</td>
+                        <td><button class="btn-texto">Registrar Pagamento</button></td>
+                    </tr>
+                    <tr>
+                        <td>#1088</td>
+                        <td>Clean Code</td>
+                        <td>Ana Clara Souza</td>
+                        <td>3 dias</td>
+                        <td class="valor-multa">R$ 6,00</td>
+                        <td><button class="btn-texto">Registrar Pagamento</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
