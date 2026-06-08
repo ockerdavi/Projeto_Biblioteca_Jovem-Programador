@@ -1,3 +1,4 @@
+/* Variaveis de cores seguindo o mesmo visual da tela de livros. */
 :root {
     --bg-main: #13382c;
     --bg-card: #ebdcb9;
@@ -8,14 +9,15 @@
     --color-edit: #556b2f;
 }
 
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    font-family: 'Segoe UI', serif, sans-serif; 
-
+/* Reset basico para padronizar espacamento e caixa dos elementos. */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', serif, sans-serif;
 }
 
+/* Estrutura geral da pagina. */
 body {
     background-color: var(--bg-main);
     color: var(--text-dark);
@@ -23,17 +25,21 @@ body {
     padding-bottom: 50px;
 }
 
-.container { 
-    width: 95%; 
-    max-width: 1400px; 
-    margin: 0 auto; 
-    padding-top: 40px; 
-    display: flex; 
-    flex-direction: column; 
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
     gap: 30px;
-
 }
 
+.hidden {
+    display: none;
+}
+
+/* Botoes agrupados no topo direito para navegacao do bibliotecario. */
 .top-actions {
     position: fixed;
     top: 18px;
@@ -137,152 +143,137 @@ body {
     color: var(--text-muted);
 }
 
-.title-container { 
-    display: flex; 
-    align-items: center; 
-    color: #ebdcb9; 
-}
-
-.title-container h1 { 
-    font-family: 'Georgia', 
-    serif; font-size: 32px; 
-    font-weight: normal; 
-
-}
-
-.badge { 
-    background-color: rgba(255, 255, 255, 0.15); 
-    color: #ebdcb9; 
-    padding: 5px 14px; 
-    border-radius: 15px; 
-    font-size: 12px; 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-
-}
-
-.btn-voltar { 
-    color: #ebdcb9; 
-    text-decoration: none; 
-    font-size: 14px; 
-    border: 1px solid #ebdcb9; 
-    padding: 6px 12px; 
-    border-radius: 8px; 
-    transition: 0.2s; 
-
-}
-
-.btn-voltar:hover { 
-    background-color: rgba(255,255,255,0.1); 
-}
-
-.card {
-     background-color: var(--bg-card); 
-     border-radius: 24px; 
-     padding: 35px; 
-     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4); 
-    
-    }
-
-.card h2 { 
-    font-family: 'Georgia', serif; 
-    font-size: 22px; 
-    color: var(--text-dark); 
-    margin-bottom: 25px; 
-    font-weight: normal; }
-
-.form-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 20px; 
-
-}
-.full-width { 
-    grid-column: span 2; 
-
-}
-
-.input-group {
-    display: flex; 
-    flex-direction: column; 
-    gap: 6px; 
-
-}
-.input-group label { 
-    font-size: 11px; 
-    color: var(--text-muted); 
-    font-weight: 600; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px; 
-
-}
-.input-group input { 
-    background-color: var(--bg-input); 
-    border: none; 
-    outline: none; 
-    padding: 16px 20px; 
-    border-radius: 16px; 
-    color: var(--text-dark); 
-    font-size: 14px; 
-    width: 100%; 
-    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(255, 255, 255, 0.5);
-
-}
-
-.hidden {
-    display: none;
-}
-
-.notification-list {
-    display: grid;
-    gap: 10px;
-    list-style: none;
-}
-
-.notification-list li {
-    background-color: var(--bg-input);
-    border-radius: 14px;
-    padding: 14px 16px;
-    box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.06), inset -3px -3px 5px rgba(255, 255, 255, 0.5);
-}
-
-.notification-item {
+/* Cabecalho da pagina e contador de registros. */
+.title-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
+    flex-wrap: wrap;
+    color: #ebdcb9;
 }
 
-.notification-item span {
-    flex: 1;
+.title-container h1 {
+    font-family: 'Georgia', serif;
+    font-size: 32px;
+    font-weight: normal;
 }
 
-.notification-ok {
-    border: none;
-    border-radius: 8px;
-    background-color: var(--color-edit);
-    color: #fff;
-    cursor: pointer;
+.badge {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ebdcb9;
+    padding: 5px 14px;
+    border-radius: 15px;
     font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-voltar {
+    color: #ebdcb9;
+    text-decoration: none;
+    font-size: 14px;
+    border: 1px solid #ebdcb9;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn-voltar:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Cartoes usados no formulario e na tabela. */
+.card {
+    background-color: var(--bg-card);
+    border-radius: 24px;
+    padding: 35px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.card h2 {
+    font-family: 'Georgia', serif;
+    font-size: 22px;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+    font-weight: normal;
+}
+
+.profile-panel {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.profile-avatar {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    background-color: var(--text-dark);
+    color: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
     font-weight: bold;
-    padding: 7px 12px;
+    overflow: hidden;
+    flex: 0 0 auto;
 }
 
-.reservation-expiring {
-    color: var(--color-danger);
-    font-weight: bold;
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.reservation-focus {
-    outline: 3px solid rgba(158, 61, 61, 0.35);
-    outline-offset: 6px;
+.profile-panel p {
+    margin-top: 4px;
+    color: var(--text-muted);
 }
 
+/* Grade do formulario de cliente. */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
 
+.full-width {
+    grid-column: span 2;
+}
+
+/* Campos de entrada do formulario. */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group input {
+    background-color: var(--bg-input);
+    border: none;
+    outline: none;
+    padding: 16px 20px;
+    border-radius: 16px;
+    color: var(--text-dark);
+    font-size: 14px;
+    width: 100%;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(255, 255, 255, 0.5);
+}
+
+/* Botoes principais do formulario. */
 .button-container { display: flex; gap: 10px; margin-top: 10px; }
 .btn-save { background-color: var(--text-dark); color: var(--bg-card); border: none; padding: 16px; border-radius: 14px; font-size: 14px; font-weight: bold; cursor: pointer; flex: 1; transition: 0.2s ease; }
 .btn-save:hover { background-color: #1a4d3d; }
 .btn-cancel { background-color: transparent; border: 2px solid var(--text-dark); color: var(--text-dark); padding: 16px; border-radius: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
 
+/* Tabela de clientes, reaproveitando a mesma linguagem visual de livros. */
 .table-container { width: 100%; overflow-x: auto; }
 .books-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; margin-top: -12px; }
 .books-table th { font-size: 11px; color: var(--text-muted); font-weight: bold; padding: 0 20px; letter-spacing: 0.5px; }
@@ -296,6 +287,7 @@ body {
 .bold { font-weight: bold; }
 .font-serif { font-family: 'Georgia', serif; }
 
+/* Botoes de acao por linha da tabela. */
 .action-buttons { display: flex; gap: 8px; justify-content: center; }
 .btn-action { padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: bold; color: #fff; cursor: pointer; transition: 0.2s; }
 .btn-edit { background-color: var(--color-edit); }
@@ -303,6 +295,7 @@ body {
 .btn-delete { background-color: var(--color-danger); }
 .btn-delete:hover { background-color: #7a2f2f; }
 
+/* Ajustes responsivos para telas menores. */
 @media (max-width: 768px) {
     .form-grid { grid-template-columns: 1fr; }
     .full-width { grid-column: span 1; }
