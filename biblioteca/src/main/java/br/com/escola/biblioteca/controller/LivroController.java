@@ -79,18 +79,4 @@ public class LivroController {
         }
     }
 
-    @GetMapping("/{id}")
-    public Livro buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id);
-    }
-
-    @PutMapping("/{id}")
-    public Livro atualizar(@PathVariable Long id, @RequestBody Livro livro) {
-        return service.atualizar(id, livro);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        service.deletar(id);
-    }
 }
