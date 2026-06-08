@@ -1,0 +1,211 @@
+/* Importação das Fontes (Serifada para títulos, Sans-serif para textos) */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+/* Reset Básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #113328;
+    /* Verde escuro do fundo */
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1a332a;
+    padding: 30px;
+    min-height: 100vh;
+}
+
+.container-principal {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ================= HEADER ================= */
+.cabecalho-sistema {
+    max-width: 1200px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titulo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.titulo-principal {
+    font-family: 'Playfair Display', serif;
+    color: #eadeba;
+    /* Creme/Bege do texto */
+    font-size: 2.2rem;
+    font-weight: 500;
+}
+
+.badge-registros {
+    background-color: rgba(234, 222, 186, 0.15);
+    color: #eadeba;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(234, 222, 186, 0.3);
+}
+
+.btn-voltar {
+    background-color: transparent;
+    color: #eadeba;
+    border: 1px solid #eadeba;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-voltar:hover {
+    background-color: #eadeba;
+    color: #113328;
+}
+
+/* ================= CARDS (BEGE) ================= */
+.card-estilizado {
+    background-color: #eadeba;
+    /* Cor de fundo idêntica ao design */
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-titulo {
+    font-family: 'Playfair Display', serif;
+    color: #113328;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+/* ================= FORMULÁRIO ================= */
+.linha-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.linha-unica {
+    grid-template-columns: 1fr;
+}
+
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.grupo-input label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #8c826e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* O efeito visual exato dos inputs do design original */
+.grupo-input input,
+.grupo-input select {
+    background-color: #dccba0;
+    /* Tom mais escuro para o efeito de afundamento */
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 1rem;
+    color: #113328;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.08);
+    /* Sombra interna */
+    outline: none;
+}
+
+.grupo-input input::placeholder {
+    color: #a3977c;
+}
+
+.btn-acao-principal {
+    background-color: #113328;
+    color: #eadeba;
+    border: none;
+    width: 100%;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.btn-acao-principal:hover {
+    background-color: #1b4d3d;
+}
+
+/* ================= TABELA DE MULTAS ================= */
+.tabela-responsiva {
+    overflow-x: auto;
+}
+
+.tabela-dados {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabela-dados th {
+    font-size: 0.75rem;
+    color: #8c826e;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(17, 51, 40, 0.1);
+}
+
+.tabela-dados td {
+    padding: 15px;
+    font-size: 0.95rem;
+    color: #113328;
+    border-bottom: 1px solid rgba(17, 51, 40, 0.05);
+}
+
+.valor-multa {
+    color: #a83232;
+    /* Cor vermelha para destacar o valor da multa */
+    font-weight: 600;
+}
+
+.btn-texto {
+    background-color: transparent;
+    color: #113328;
+    border: 1px solid #113328;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-texto:hover {
+    background-color: #113328;
+    color: #eadeba;
+}
+
+/* Responsividade Básica */
+@media (max-width: 768px) {
+    .linha-form {
+        grid-template-columns: 1fr;
+    }
+}
