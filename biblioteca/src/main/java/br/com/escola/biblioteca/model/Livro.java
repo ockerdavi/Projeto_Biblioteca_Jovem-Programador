@@ -29,4 +29,6 @@ public class Livro {
     private Integer quantidadeDisponivel;
 
     private Integer quantidadeAlugada;
+
+    private Integer quantidadeRepetida;
 }
