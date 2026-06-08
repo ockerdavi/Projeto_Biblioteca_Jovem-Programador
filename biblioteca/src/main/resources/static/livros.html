@@ -8,13 +8,33 @@
 </head>
 <body>
 
+    <nav class="top-actions">
+        <a href="./livros.html" class="nav-button">Livros</a>
+        <a href="./cliente.html" class="nav-button">Alunos</a>
+        <a href="./login.html" class="nav-button">Login</a>
+        <button type="button" class="nav-button nav-danger" onclick="fecharTela()">Fechar</button>
+    </nav>
+
     <main class="container">
         <div class="title-container">
             <h1 id="titulo-pagina">Dashboard Biblioteca</h1>
             <span id="badge-total" class="badge">Acervo - 0 títulos</span>
         </div>
 
-        <section class="card">
+        <section id="area-notificacoes-aluno" class="card hidden">
+            <h2>Minhas notificacoes</h2>
+            <ul id="lista-notificacoes-aluno" class="notification-list"></ul>
+        </section>
+
+        <section id="area-busca-aluno" class="card hidden">
+            <h2>Pesquisar Livro</h2>
+            <div class="input-group full-width">
+                <label for="busca-livro">Titulo, autor ou categoria</label>
+                <input type="text" id="busca-livro" placeholder="Pesquisar livro para reservar">
+            </div>
+        </section>
+
+        <section id="area-form-livro" class="card">
             <h2 id="titulo-form">Cadastrar Livro</h2>
             <form id="form-livro" class="form-grid">
                 <input type="hidden" id="livro-id">
@@ -51,6 +71,26 @@
             </form>
         </section>
 
+        <section id="area-reservas-bibliotecario" class="card hidden">
+            <h2>Reservas dos Alunos</h2>
+            <div class="table-container">
+                <table class="books-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-left">ALUNO</th>
+                            <th class="text-left">LIVRO</th>
+                            <th class="text-center">STATUS</th>
+                            <th class="text-center">VALIDADE</th>
+                            <th class="text-center">ACOES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-reservas-body">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="card">
             <h2>Livros</h2>
             <div class="table-container">
@@ -72,5 +112,6 @@
     </main>
 
   <script src="./js/livros.js"></script>
+  <script src="./js/nav.js"></script>
 </body>
 </html>

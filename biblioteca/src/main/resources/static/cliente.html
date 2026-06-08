@@ -8,6 +8,13 @@
 </head>
 <body>
 
+    <nav class="top-actions">
+        <a href="./livros.html" class="nav-button">Livros</a>
+        <a href="./cliente.html" class="nav-button">Alunos</a>
+        <a href="./login.html" class="nav-button">Login</a>
+        <button type="button" class="nav-button nav-danger" onclick="fecharTela()">Fechar</button>
+    </nav>
+
     <main class="container">
         <!-- Cabecalho da pagina e contador de clientes cadastrados -->
         <div class="title-container">
@@ -15,8 +22,19 @@
             <span id="badge-total" class="badge">Clientes - 0 cadastrados</span>
         </div>
 
+        <!-- Cartao exclusivo do aluno com foto e dados pessoais -->
+        <section id="perfil-aluno-card" class="card hidden">
+            <div class="profile-panel">
+                <div id="perfil-aluno-avatar" class="profile-avatar">AL</div>
+                <div>
+                    <h2 id="perfil-aluno-nome">Meus dados</h2>
+                    <p id="perfil-aluno-email">Atualize suas informacoes cadastrais.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Formulario de cadastro e edicao de cliente -->
-        <section class="card">
+        <section id="form-cliente-card" class="card">
             <h2 id="titulo-form">Cadastrar Cliente</h2>
             <form id="form-cliente" class="form-grid">
                 <input type="hidden" id="cliente-id">
@@ -69,7 +87,7 @@
         </section>
 
         <!-- Tabela com os clientes vindos do backend -->
-        <section class="card">
+        <section id="lista-clientes-card" class="card">
             <h2>Clientes</h2>
             <div class="table-container">
                 <table id="tabela-clientes" class="books-table">
@@ -93,5 +111,6 @@
     </main>
 
     <script src="./js/cliente.js"></script>
+    <script src="./js/nav.js"></script>
 </body>
 </html>

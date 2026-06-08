@@ -34,6 +34,109 @@ body {
 
 }
 
+.top-actions {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.nav-button {
+    background-color: var(--bg-card);
+    color: var(--text-dark);
+    border: 1px solid rgba(19, 56, 44, 0.22);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-danger {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+/* Sino de reservas pendentes exibido somente para o bibliotecario. */
+.notification-button {
+    position: relative;
+    min-width: 42px;
+    height: 42px;
+    border: 1px solid rgba(19, 56, 44, 0.22);
+    border-radius: 10px;
+    background-color: var(--bg-card);
+    color: var(--text-dark);
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+}
+
+.notification-count {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background-color: var(--color-danger);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-dark);
+    border-radius: 12px;
+    padding: 7px 10px;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
+}
+
+.user-chip img,
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--text-dark);
+    color: var(--bg-card);
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.user-chip strong,
+.user-chip small {
+    display: block;
+    line-height: 1.1;
+}
+
+.user-chip strong {
+    font-size: 12px;
+}
+
+.user-chip small {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
 .title-container { 
     display: flex; 
     align-items: center; 
@@ -123,6 +226,55 @@ body {
     width: 100%; 
     box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(255, 255, 255, 0.5);
 
+}
+
+.hidden {
+    display: none;
+}
+
+.notification-list {
+    display: grid;
+    gap: 10px;
+    list-style: none;
+}
+
+.notification-list li {
+    background-color: var(--bg-input);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.06), inset -3px -3px 5px rgba(255, 255, 255, 0.5);
+}
+
+.notification-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.notification-item span {
+    flex: 1;
+}
+
+.notification-ok {
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-edit);
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 7px 12px;
+}
+
+.reservation-expiring {
+    color: var(--color-danger);
+    font-weight: bold;
+}
+
+.reservation-focus {
+    outline: 3px solid rgba(158, 61, 61, 0.35);
+    outline-offset: 6px;
 }
 
 
