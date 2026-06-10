@@ -1,4 +1,4 @@
-const API_BASE_URL = window.location.port === "5500" ? "http://localhost:8080" : "";
+const API_BASE_URL = "http://localhost:8080";
 const CLIENTES_API_URL = `${API_BASE_URL}/api/clientes`;
 const LIVROS_API_URL = `${API_BASE_URL}/api/livros`;
 const EMPRESTIMOS_API_URL = `${API_BASE_URL}/api/emprestimos`;

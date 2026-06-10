@@ -1,5 +1,5 @@
 // Aguarda o carregamento completo do DOM
-const API_BASE_URL = window.location.port === "5500" ? "http://localhost:8080" : "";
+const API_BASE_URL = "http://localhost:8080";
 const EMPRESTIMOS_API_URL = `${API_BASE_URL}/api/emprestimos`;
 
 document.addEventListener('DOMContentLoaded', () => {
