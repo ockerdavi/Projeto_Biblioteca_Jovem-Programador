@@ -91,8 +91,10 @@ body {
 
 /* ================= FORMULÁRIO ================= */
 .linha-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: row;
+    width: auto;
+
     gap: 20px;
     margin-bottom: 20px;
 }
@@ -105,6 +107,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
 }
 
 .grupo-input label {
@@ -207,5 +210,11 @@ body {
 @media (max-width: 768px) {
     .linha-form {
         grid-template-columns: 1fr;
+    }
+
+    .cabecalho-sistema {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
     }
 }
