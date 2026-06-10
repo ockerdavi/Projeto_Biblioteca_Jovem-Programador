@@ -121,7 +121,7 @@ Guilherme: Desenvolvimento Frontend (equipe 3)
 
 --> Passo 2: Acessar o diretório
 
-  cd biblioteca
+  cd Projeto_Biblioteca_Jovem-Programador
 
 --> Passo 3: Executar a aplicação
 
