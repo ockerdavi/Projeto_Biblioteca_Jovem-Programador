@@ -36,7 +36,7 @@
 
         <section id="area-form-livro" class="card">
             <h2 id="titulo-form">Cadastrar Livro</h2>
-            <form id="form-livro" class="form-grid">
+            <form id="form-livro" class="form-grid" enctype="multipart/form-data">
                 <input type="hidden" id="livro-id">
 
                 <div class="input-group full-width">
@@ -62,6 +62,12 @@
                 <div class="input-group">
                     <label for="quantidade">Quantidade</label>
                     <input type="number" id="quantidade" placeholder="Quantidade" required min="1">
+                </div>
+
+                <div class="input-group full-width">
+                    <label for="capa">Capa do Livro (Opcional)</label>
+                    <input type="file" id="capa" name="capa" accept="image/*" onchange="previewImagem(this)">
+                    <div id="preview-capa" style="margin-top: 10px;"></div>
                 </div>
 
                 <div class="button-container full-width">
@@ -105,13 +111,59 @@
                         </tr>
                     </thead>
                     <tbody>
-                        </tbody>
+                        <!-- Os livros serão carregados aqui via JavaScript -->
+                    </tbody>
                 </table>
             </div>
         </section>
     </main>
 
-  <script src="./js/livros.js"></script>
-  <script src="./js/nav.js"></script>
+    <script src="./js/livros.js"></script>
+    <script src="./js/nav.js"></script>
+    
+    <script>
+        // Função para preview da imagem
+        function previewImagem(input) {
+            const preview = document.getElementById('preview-capa');
+            preview.innerHTML = '';
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '150px';
+                    img.style.maxHeight = '200px';
+                    img.style.marginTop = '10px';
+                    img.style.borderRadius = '4px';
+                    img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    preview.appendChild(img);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        // Função para resetar o formulário
+        function resetarFormulario() {
+            document.getElementById('form-livro').reset();
+            document.getElementById('livro-id').value = '';
+            document.getElementById('titulo-form').textContent = 'Cadastrar Livro';
+            document.getElementById('btn-salvar').textContent = 'Salvar';
+            document.getElementById('btn-cancelar').style.display = 'none';
+            
+            // Limpar preview da imagem
+            const preview = document.getElementById('preview-capa');
+            if (preview) {
+                preview.innerHTML = '';
+            }
+        }
+        
+        // Função para fechar a tela
+        function fecharTela() {
+            if (confirm('Deseja realmente fechar a aplicação?')) {
+                window.close();
+            }
+        }
+    </script>
 </body>
 </html>
