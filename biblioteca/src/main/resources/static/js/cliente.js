@@ -1,4 +1,5 @@
-const API_URL = "/api/clientes";
+const API_BASE_URL = window.location.port === "5500" ? "http://localhost:8080" : "";
+const API_URL = `${API_BASE_URL}/api/clientes`;
 const SESSAO_STORAGE_KEY = "biblioteca_usuario_logado";
 const USUARIOS_STORAGE_KEY = "biblioteca_usuarios_teste";
 

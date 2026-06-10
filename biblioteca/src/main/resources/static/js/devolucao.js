@@ -1,4 +1,7 @@
 // Aguarda o carregamento completo do DOM
+const API_BASE_URL = window.location.port === "5500" ? "http://localhost:8080" : "";
+const EMPRESTIMOS_API_URL = `${API_BASE_URL}/api/emprestimos`;
+
 document.addEventListener('DOMContentLoaded', () => {
     const formDevolucao = document.getElementById('form-devolucao');
     if (!formDevolucao) return;
@@ -60,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Captura dos valores do formulário
         const codigoOuIsbn = document.getElementById('codigo-livro').value.trim();
         const dataDevolucao = inputData.value;
-        const estadoConservacao = document.getElementById('estado-conservacao').value;
 
         // Validação básica de segurança
         if (!codigoOuIsbn || !dataDevolucao) {
@@ -69,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            let url = `/api/emprestimos/devolver/${codigoOuIsbn}`;
+            const emprestimoId = await resolverEmprestimoId(codigoOuIsbn);
+            let url = `${EMPRESTIMOS_API_URL}/devolver/${emprestimoId}`;
             let options = { method: 'PUT' };
 
             // Se o checkbox NÃO estiver marcado, envia a data escolhida no corpo (JSON)
@@ -77,16 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!checkboxHoje.checked) {
                 options.headers = { 'Content-Type': 'application/json' };
                 options.body = JSON.stringify({
-                    dataEntrega: dataDevolucao,
-                    estado: estadoConservacao
+                    dataEntrega: dataDevolucao
                 });
             } else {
                 // Se for a data de hoje, assume o comportamento padrão do backend (LocalDate.now())
                 // Opcional: Se seu backend exigir o JSON mesmo com a data de hoje, basta remover o 'if' e enviar o body sempre.
                 options.headers = { 'Content-Type': 'application/json' };
-                options.body = JSON.stringify({
-                    estado: estadoConservacao
-                });
+                options.body = JSON.stringify({});
             }
 
             // Exibe log para debug dos devs
@@ -110,10 +110,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Falha na comunicação com o servidor:', error);
-            showTempMessage('Falha ao conectar com o backend.', 'error');
+            showTempMessage(error.message || 'Falha ao conectar com o backend.', 'error');
         }
     });
 });
+
+async function resolverEmprestimoId(codigoOuIsbn) {
+    if (/^\d+$/.test(codigoOuIsbn)) {
+        return codigoOuIsbn;
+    }
+
+    const response = await fetch(EMPRESTIMOS_API_URL);
+    if (!response.ok) throw new Error('Nao foi possivel consultar emprestimos.');
+
+    const emprestimos = await response.json();
+    const emprestimo = emprestimos.find(item =>
+        item.livro?.isbn === codigoOuIsbn &&
+        ['EMPRESTADO', 'EM_ANDAMENTO', 'ATRASADO'].includes(item.status)
+    );
+
+    if (!emprestimo) {
+        throw new Error('Nenhum emprestimo ativo encontrado para este ISBN.');
+    }
+
+    return emprestimo.id;
+}
 
 // 4. Função auxiliar de Feedback Visual (Mantendo o padrão do seu script de teste)
 function showTempMessage(msg, type) {

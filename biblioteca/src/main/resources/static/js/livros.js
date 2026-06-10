@@ -1,5 +1,6 @@
 // Endpoint do backend Spring Boot para o modulo de livros.
-const API_URL = "/api/livros";
+const API_BASE_URL = window.location.port === "5500" ? "http://localhost:8080" : "";
+const API_URL = `${API_BASE_URL}/api/livros`;
 const SESSAO_STORAGE_KEY = "biblioteca_usuario_logado";
 const RESERVAS_STORAGE_KEY = "biblioteca_reservas_teste";
 

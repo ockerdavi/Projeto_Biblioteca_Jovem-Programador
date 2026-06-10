@@ -1,6 +1,7 @@
-const CLIENTES_API_URL = "/api/clientes";
-const LIVROS_API_URL = "/api/livros";
-const EMPRESTIMOS_API_URL = "/api/emprestimos";
+const API_BASE_URL = window.location.port === "5500" ? "http://localhost:8080" : "";
+const CLIENTES_API_URL = `${API_BASE_URL}/api/clientes`;
+const LIVROS_API_URL = `${API_BASE_URL}/api/livros`;
+const EMPRESTIMOS_API_URL = `${API_BASE_URL}/api/emprestimos`;
 const STORAGE_KEY = "biblioteca_emprestimos_teste";
 
 const formEmprestimo = document.getElementById("form-emprestimo");
@@ -26,7 +27,7 @@ if (formEmprestimo) {
 async function inicializarTela() {
     clientes = await carregarLista(CLIENTES_API_URL, obterClientesTeste());
     livros = await carregarLista(LIVROS_API_URL, obterLivrosTeste());
-    emprestimos = carregarEmprestimosTeste();
+    emprestimos = await carregarEmprestimos();
 
     preencherSelectClientes();
     preencherSelectLivros();
@@ -42,6 +43,17 @@ async function carregarLista(url, fallback) {
     } catch (error) {
         modoTesteLocal = true;
         return fallback;
+    }
+}
+
+async function carregarEmprestimos() {
+    try {
+        const response = await fetch(EMPRESTIMOS_API_URL);
+        if (!response.ok) throw new Error("Backend indisponivel");
+        return await response.json();
+    } catch (error) {
+        modoTesteLocal = true;
+        return carregarEmprestimosTeste();
     }
 }
 
@@ -69,7 +81,7 @@ function preencherSelectLivros() {
     });
 }
 
-// Registra o emprestimo no modo local de teste.
+// Registra o emprestimo no backend. Se a API estiver indisponivel, usa o modo local de teste.
 async function registrarEmprestimo() {
     const cliente = clientes.find(item => String(item.id) === selectCliente.value);
     const livro = livros.find(item => String(item.id) === selectLivro.value);
@@ -79,6 +91,33 @@ async function registrarEmprestimo() {
     if (!cliente || !livro) {
         alert("Selecione um cliente e um livro.");
         return;
+    }
+
+    if (!modoTesteLocal) {
+        try {
+            const response = await fetch(EMPRESTIMOS_API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    clienteId: Number(selectCliente.value),
+                    livroId: Number(selectLivro.value),
+                    diasPermitidos,
+                    valorMultaDiaria
+                })
+            });
+
+            if (!response.ok) throw new Error("Erro ao registrar emprestimo");
+
+            resetarFormulario();
+            await recarregarDadosDoBackend();
+            return;
+        } catch (error) {
+            console.error("Erro ao registrar emprestimo no backend:", error);
+            alert("Nao foi possivel registrar o emprestimo no banco de dados.");
+            return;
+        }
     }
 
     const hoje = new Date();
@@ -108,7 +147,17 @@ async function registrarEmprestimo() {
     }
 }
 
-// Renderiza os emprestimos cadastrados no modo local.
+async function recarregarDadosDoBackend() {
+    clientes = await carregarLista(CLIENTES_API_URL, obterClientesTeste());
+    livros = await carregarLista(LIVROS_API_URL, obterLivrosTeste());
+    emprestimos = await carregarEmprestimos();
+
+    preencherSelectClientes();
+    preencherSelectLivros();
+    renderizarEmprestimos();
+}
+
+// Renderiza os emprestimos cadastrados no backend ou no modo local.
 function renderizarEmprestimos() {
     if (!tabelaEmprestimosBody) return;
 
@@ -123,7 +172,7 @@ function renderizarEmprestimos() {
         const tr = document.createElement("tr");
         const multa = Number(emprestimo.multa || 0).toFixed(2);
         const valorMultaDiaria = Number(emprestimo.valorMultaDiaria || 0).toFixed(2);
-        const podeDevolver = emprestimo.status === "EMPRESTADO";
+        const podeDevolver = ["EMPRESTADO", "EM_ANDAMENTO", "ATRASADO"].includes(emprestimo.status);
 
         tr.innerHTML = `
             <td class="text-center">${String(emprestimo.id).padStart(2, "0")}</td>
@@ -148,7 +197,28 @@ function renderizarEmprestimos() {
     });
 }
 
-function devolverEmprestimo(id) {
+async function devolverEmprestimo(id) {
+    if (!modoTesteLocal) {
+        try {
+            const response = await fetch(`${EMPRESTIMOS_API_URL}/devolver/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
+            });
+
+            if (!response.ok) throw new Error("Erro ao devolver emprestimo");
+
+            await recarregarDadosDoBackend();
+            return;
+        } catch (error) {
+            console.error("Erro ao devolver emprestimo no backend:", error);
+            alert("Nao foi possivel registrar a devolucao no banco de dados.");
+            return;
+        }
+    }
+
     const emprestimo = emprestimos.find(item => String(item.id) === String(id));
     if (!emprestimo) return;
 
@@ -160,8 +230,25 @@ function devolverEmprestimo(id) {
     renderizarEmprestimos();
 }
 
-function removerEmprestimo(id) {
+async function removerEmprestimo(id) {
     if (!confirm("Deseja realmente excluir este emprestimo?")) return;
+
+    if (!modoTesteLocal) {
+        try {
+            const response = await fetch(`${EMPRESTIMOS_API_URL}/${id}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) throw new Error("Erro ao excluir emprestimo");
+
+            await recarregarDadosDoBackend();
+            return;
+        } catch (error) {
+            console.error("Erro ao excluir emprestimo no backend:", error);
+            alert("Nao foi possivel excluir o emprestimo no banco de dados.");
+            return;
+        }
+    }
 
     emprestimos = emprestimos.filter(item => String(item.id) !== String(id));
     salvarEmprestimosTeste();
