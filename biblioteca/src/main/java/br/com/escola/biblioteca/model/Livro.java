@@ -29,4 +29,7 @@ public class Livro {
     private Integer quantidadeDisponivel;
 
     private Integer quantidadeAlugada;
+    
+    @Column(name = "capa_url")
+    private String capaUrl; // Caminho da imagem da capa
 }

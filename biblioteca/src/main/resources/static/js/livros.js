@@ -89,9 +89,27 @@ function renderizarLivros(livros) {
         const qtdAlugados = livro.quantidadeAlugada ?? livro.alugados ?? 0;
         const tr = document.createElement("tr");
 
+        // Construir a célula do título com imagem
+        let tituloHtml = '';
+        if (livro.capaUrl) {
+            tituloHtml = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="${API_URL}${livro.capaUrl}" alt="Capa" style="width: 40px; height: 50px; object-fit: cover; border-radius: 4px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'50\\' viewBox=\\'0 0 40 50\\'%3E%3Crect width=\\'40\\' height=\\'50\\' fill=\\'%23f0f0f0\\'/%3E%3Ctext x=\\'20\\' y=\\'25\\' text-anchor=\\'middle\\' fill=\\'%23999\\' font-size=\\'10\\'%3ESem capa%3C/text%3E%3C/svg%3E'">
+                    <span>${livro.titulo}</span>
+                </div>
+            `;
+        } else {
+            tituloHtml = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 40px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 10px;">Sem capa</div>
+                    <span>${livro.titulo}</span>
+                </div>
+            `;
+        }
+
         tr.innerHTML = `
             <td class="text-center">${String(livro.id).padStart(2, "0")}</td>
-            <td class="text-left font-serif bold">${livro.titulo}</td>
+            <td class="text-left font-serif bold">${tituloHtml}</td>
             <td class="text-center bold">${qtdDisponivel}</td>
             <td class="text-center bold">${qtdAlugados}</td>
             <td class="text-center">
@@ -262,7 +280,7 @@ function confirmarNotificacaoAluno(id) {
     renderizarNotificacoesAluno();
 }
 
-// POST ou PUT - Salvar Livro na API
+// POST ou PUT - Salvar Livro na API (com suporte a imagem)
 async function salvarLivro() {
     const id = document.getElementById("livro-id").value;
     const titulo = document.getElementById("titulo").value;
@@ -270,14 +288,20 @@ async function salvarLivro() {
     const isbn = document.getElementById("isbn").value;
     const categoria = document.getElementById("categoria").value;
     const quantidadeTotal = Number(document.getElementById("quantidade").value);
-
-    const dadosLivro = {
-        titulo,
-        autor,
-        isbn,
-        categoria,
-        quantidadeTotal
-    };
+    
+    // Criar FormData para enviar com imagem
+    const formData = new FormData();
+    formData.append("titulo", titulo);
+    formData.append("autor", autor);
+    formData.append("isbn", isbn);
+    formData.append("categoria", categoria);
+    formData.append("quantidade", quantidadeTotal);
+    
+    // Adicionar imagem se existir
+    const capaInput = document.getElementById("capa");
+    if (capaInput && capaInput.files.length > 0) {
+        formData.append("capa", capaInput.files[0]);
+    }
 
     try {
         let url = API_URL;
@@ -290,19 +314,20 @@ async function salvarLivro() {
 
         const response = await fetch(url, {
             method: metodo,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(dadosLivro)
+            body: formData // Não usar headers 'Content-Type' com FormData
         });
 
-        if (!response.ok) throw new Error("Erro ao salvar os dados na API");
+        if (!response.ok) {
+            const erro = await response.text();
+            throw new Error(erro || "Erro ao salvar os dados na API");
+        }
 
+        alert(id ? "Livro atualizado com sucesso!" : "Livro cadastrado com sucesso!");
         resetarFormulario();
         listarLivros();
     } catch (error) {
         console.error("Erro ao salvar livro:", error);
-        alert("Ocorreu um erro ao salvar o livro na API.");
+        alert("Ocorreu um erro ao salvar o livro: " + error.message);
     }
 }
 
@@ -321,6 +346,23 @@ async function editarLivro(id) {
         document.getElementById("categoria").value = livro.categoria || "";
         document.getElementById("quantidade").value = livro.quantidadeTotal || livro.quantidade || "";
 
+        // Mostrar preview da capa atual se existir
+        const previewDiv = document.getElementById("preview-capa");
+        if (previewDiv) {
+            if (livro.capaUrl) {
+                previewDiv.innerHTML = `
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 12px; color: #666;">Capa atual:</label>
+                        <div>
+                            <img src="${API_URL}${livro.capaUrl}" alt="Capa atual" style="max-width: 100px; max-height: 120px; margin-top: 5px; border-radius: 4px;">
+                        </div>
+                    </div>
+                `;
+            } else {
+                previewDiv.innerHTML = "";
+            }
+        }
+
         if (document.getElementById("titulo-form")) document.getElementById("titulo-form").innerText = "Atualizar Livro";
         if (document.getElementById("btn-salvar")) document.getElementById("btn-salvar").innerText = "Atualizar";
         if (document.getElementById("btn-cancelar")) document.getElementById("btn-cancelar").style.display = "block";
@@ -328,6 +370,7 @@ async function editarLivro(id) {
         window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
         console.error("Erro ao carregar livro para edicao:", error);
+        alert("Erro ao carregar dados do livro");
     }
 }
 
@@ -342,6 +385,7 @@ async function deletarLivro(id) {
 
         if (!response.ok) throw new Error("Erro ao deletar livro na API");
 
+        alert("Livro excluído com sucesso!");
         listarLivros();
     } catch (error) {
         console.error("Erro ao deletar livro:", error);
@@ -353,6 +397,19 @@ function resetarFormulario() {
     if (!formLivro) return;
     formLivro.reset();
     document.getElementById("livro-id").value = "";
+    
+    // Limpar preview da imagem
+    const previewDiv = document.getElementById("preview-capa");
+    if (previewDiv) {
+        previewDiv.innerHTML = "";
+    }
+    
+    // Limpar input de arquivo
+    const capaInput = document.getElementById("capa");
+    if (capaInput) {
+        capaInput.value = "";
+    }
+    
     if (document.getElementById("titulo-form")) document.getElementById("titulo-form").innerText = "Cadastrar Livro";
     if (document.getElementById("btn-salvar")) document.getElementById("btn-salvar").innerText = "Salvar";
     if (document.getElementById("btn-cancelar")) document.getElementById("btn-cancelar").style.display = "none";
@@ -419,3 +476,37 @@ function diasAte(dataISO) {
     const data = new Date(dataISO);
     return Math.ceil((data - hoje) / (1000 * 60 * 60 * 24));
 }
+
+// Função de preview da imagem (chamada pelo HTML)
+function previewImagem(input) {
+    const preview = document.getElementById('preview-capa');
+    if (!preview) return;
+    
+    // Limpar preview atual
+    preview.innerHTML = '';
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '150px';
+            img.style.maxHeight = '200px';
+            img.style.marginTop = '10px';
+            img.style.borderRadius = '4px';
+            img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            preview.appendChild(img);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Tornar funções globais acessíveis pelo HTML
+window.editarLivro = editarLivro;
+window.deletarLivro = deletarLivro;
+window.reservarLivro = reservarLivro;
+window.autorizarReserva = autorizarReserva;
+window.darBaixaReserva = darBaixaReserva;
+window.confirmarNotificacaoAluno = confirmarNotificacaoAluno;
+window.resetarFormulario = resetarFormulario;
+window.previewImagem = previewImagem;

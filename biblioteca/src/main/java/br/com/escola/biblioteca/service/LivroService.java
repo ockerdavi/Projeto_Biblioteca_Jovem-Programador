@@ -1,6 +1,5 @@
 package br.com.escola.biblioteca.service;
 
-
 import br.com.escola.biblioteca.model.Livro;
 import br.com.escola.biblioteca.repository.LivroRepository;
 import org.springframework.stereotype.Service;
@@ -31,29 +30,31 @@ public class LivroService {
     }
 
     public Livro atualizar(Long id, Livro livroAtualizado) {
-    Livro livroExistente = buscarPorId(id);
+        Livro livroExistente = buscarPorId(id);
 
-    livroExistente.setTitulo(livroAtualizado.getTitulo());
-    livroExistente.setIsbn(livroAtualizado.getIsbn());
-    livroExistente.setAutor(livroAtualizado.getAutor());
-    livroExistente.setCategoria(livroAtualizado.getCategoria());
+        livroExistente.setTitulo(livroAtualizado.getTitulo());
+        livroExistente.setIsbn(livroAtualizado.getIsbn());
+        livroExistente.setAutor(livroAtualizado.getAutor());
+        livroExistente.setCategoria(livroAtualizado.getCategoria());
 
-    int quantidadeAlugada = livroExistente.getQuantidadeAlugada() != null
-            ? livroExistente.getQuantidadeAlugada()
-            : 0;
+        int quantidadeAlugada = livroExistente.getQuantidadeAlugada() != null
+                ? livroExistente.getQuantidadeAlugada()
+                : 0;
 
-    int novaQuantidadeTotal = livroAtualizado.getQuantidadeTotal() != null
-            ? livroAtualizado.getQuantidadeTotal()
-            : 0;
+        int novaQuantidadeTotal = livroAtualizado.getQuantidadeTotal() != null
+                ? livroAtualizado.getQuantidadeTotal()
+                : 0;
 
-    livroExistente.setQuantidadeTotal(novaQuantidadeTotal);
+        livroExistente.setQuantidadeTotal(novaQuantidadeTotal);
+        livroExistente.setQuantidadeDisponivel(novaQuantidadeTotal - quantidadeAlugada);
+        
+        // Atualizar capa apenas se uma nova foi enviada
+        if (livroAtualizado.getCapaUrl() != null) {
+            livroExistente.setCapaUrl(livroAtualizado.getCapaUrl());
+        }
 
-    // Corrige cálculo da quantidade disponível
-    livroExistente.setQuantidadeDisponivel(novaQuantidadeTotal - quantidadeAlugada);
-
-    return repository.save(livroExistente);
-}
-
+        return repository.save(livroExistente);
+    }
 
     public void deletar(Long id) {
         Livro livro = buscarPorId(id);
