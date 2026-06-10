@@ -31,28 +31,29 @@ public class LivroService {
     }
 
     public Livro atualizar(Long id, Livro livroAtualizado) {
-        Livro livroExistente = buscarPorId(id);
-        
-        livroExistente.setTitulo(livroAtualizado.getTitulo());
-        livroExistente.setIsbn(livroAtualizado.getIsbn());
-        livroExistente.setAutor(livroAtualizado.getAutor());
-        livroExistente.setCategoria(livroAtualizado.getCategoria());
-        int quantidadeAlugada = livroExistente.getQuantidadeAlugada() != null
-                ? livroExistente.getQuantidadeAlugada()
-                : 0;
-        int novaQuantidadeTotal = livroAtualizado.getQuantidadeTotal() != null
-                ? livroAtualizado.getQuantidadeTotal()
-                : 0;
+    Livro livroExistente = buscarPorId(id);
 
-        livroExistente.setQuantidadeTotal(novaQuantidadeTotal);
-        
-        // Recalcula disponível baseado na nova quantidade total
-        int emprestados = livroExistente.getQuantidadeTotal() - livroExistente.getQuantidadeDisponivel();
-        livroExistente.setQuantidadeDisponivel(livroAtualizado.getQuantidadeTotal() - emprestados);
-      
-        
-        return repository.save(livroExistente);
-    }
+    livroExistente.setTitulo(livroAtualizado.getTitulo());
+    livroExistente.setIsbn(livroAtualizado.getIsbn());
+    livroExistente.setAutor(livroAtualizado.getAutor());
+    livroExistente.setCategoria(livroAtualizado.getCategoria());
+
+    int quantidadeAlugada = livroExistente.getQuantidadeAlugada() != null
+            ? livroExistente.getQuantidadeAlugada()
+            : 0;
+
+    int novaQuantidadeTotal = livroAtualizado.getQuantidadeTotal() != null
+            ? livroAtualizado.getQuantidadeTotal()
+            : 0;
+
+    livroExistente.setQuantidadeTotal(novaQuantidadeTotal);
+
+    // Corrige cálculo da quantidade disponível
+    livroExistente.setQuantidadeDisponivel(novaQuantidadeTotal - quantidadeAlugada);
+
+    return repository.save(livroExistente);
+}
+
 
     public void deletar(Long id) {
         Livro livro = buscarPorId(id);
