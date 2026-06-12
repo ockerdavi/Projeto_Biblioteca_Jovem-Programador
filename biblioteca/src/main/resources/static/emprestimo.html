@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emprestimos Biblioteca</title>
     <link rel="stylesheet" href="./css/emprestimo.css">
 </head>
+
 <body>
 
     <main class="container">
@@ -20,27 +22,38 @@
             <h2 id="titulo-form">Registrar Emprestimo</h2>
             <form id="form-emprestimo" class="form-grid">
                 <div class="input-group">
-                    <label for="cliente">Cliente</label>
+                    <label for="cliente">Cliente *</label>
                     <select id="cliente" required>
                         <option value="">Selecione um cliente</option>
                     </select>
                 </div>
 
                 <div class="input-group">
-                    <label for="livro">Livro</label>
+                    <label for="livro">Livro *</label>
                     <select id="livro" required>
                         <option value="">Selecione um livro</option>
                     </select>
+                    <small id="livro-disponivel" style="display: block; margin-top: 5px;"></small>
                 </div>
 
                 <div class="input-group">
-                    <label for="dias-permitidos">Dias permitidos</label>
-                    <input type="number" id="dias-permitidos" placeholder="Dias permitidos" required min="1" value="7">
+                    <label for="diasPermitidos">Dias permitidos *</label>
+                    <input type="number" id="diasPermitidos" placeholder="Dias permitidos" required min="1" value="7">
                 </div>
 
                 <div class="input-group">
-                    <label for="valor-multa-diaria">Multa diaria</label>
-                    <input type="number" id="valor-multa-diaria" placeholder="Multa diaria" required min="0" step="0.01" value="2.00">
+                    <label for="multaDiaria">Valor Multa Diária (R$)</label>
+                    <input type="number" id="multaDiaria" name="multaDiaria" step="0.01" min="0"
+                        placeholder="Deixe em branco para usar o valor padrão do livro">
+                    <small>Opcional - Se não preencher, usará o valor cadastrado no livro</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="EM_ANDAMENTO">Em andamento</option>
+                        <option value="PENDENTE">Reserva pendente</option>
+                    </select>
                 </div>
 
                 <div class="button-container full-width">
@@ -66,11 +79,11 @@
                             <th class="text-center">DIAS</th>
                             <th class="text-center">STATUS</th>
                             <th class="text-center">MULTA</th>
-                            <th class="text-center">MULTA DIARIA</th>
-                            <th class="text-center">ACOES</th>
+                            <th class="text-center">AÇÕES</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabela-emprestimos-body">
+                        <tr><td colspan="10" class="text-center">Carregando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -79,4 +92,5 @@
 
     <script src="./js/emprestimo.js"></script>
 </body>
+
 </html>

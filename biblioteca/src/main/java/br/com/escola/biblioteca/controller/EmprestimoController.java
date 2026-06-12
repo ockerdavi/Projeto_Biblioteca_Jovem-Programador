@@ -24,14 +24,12 @@ public class EmprestimoController {
     @PostMapping
     public ResponseEntity<Emprestimo> emprestar(@RequestBody EmprestimoRequestDTO dto) {
         try {
-            // Criar objetos parciais só com os IDs
             Cliente cliente = new Cliente();
             cliente.setId(dto.getClienteId());
 
             Livro livro = new Livro();
             livro.setId(dto.getLivroId());
 
-            // Criar o empréstimo com os objetos
             Emprestimo emprestimo = new Emprestimo();
             emprestimo.setCliente(cliente);
             emprestimo.setLivro(livro);
@@ -41,7 +39,8 @@ public class EmprestimoController {
             emprestimo.setDiasPermitidos(dto.getDiasPermitidos());
             emprestimo.setStatus(dto.getStatus());
             emprestimo.setMulta(dto.getMulta());
-            emprestimo.setValorMultaDiaria(dto.getValorMultaDiaria());
+            
+            // NÃO envia valorMultaDiaria - será buscado do livro
 
             Emprestimo salvo = service.emprestar(emprestimo);
             return new ResponseEntity<>(salvo, HttpStatus.CREATED);
@@ -67,18 +66,15 @@ public class EmprestimoController {
         }
     }
 
-    // Adicione este método ANTES ou DEPOIS do método devolver
     @PutMapping("/{id}")
     public ResponseEntity<Emprestimo> atualizar(@PathVariable Long id, @RequestBody EmprestimoRequestDTO dto) {
         try {
-            // Criar objetos parciais só com os IDs
             Cliente cliente = new Cliente();
             cliente.setId(dto.getClienteId());
 
             Livro livro = new Livro();
             livro.setId(dto.getLivroId());
 
-            // Criar o empréstimo com os novos dados
             Emprestimo emprestimo = new Emprestimo();
             emprestimo.setCliente(cliente);
             emprestimo.setLivro(livro);
@@ -88,9 +84,9 @@ public class EmprestimoController {
             emprestimo.setDiasPermitidos(dto.getDiasPermitidos());
             emprestimo.setStatus(dto.getStatus());
             emprestimo.setMulta(dto.getMulta());
-            emprestimo.setValorMultaDiaria(dto.getValorMultaDiaria());
+            
+            // NÃO envia valorMultaDiaria - será buscado do livro
 
-            // Chamar o service para atualizar (você precisa criar este método no Service)
             Emprestimo atualizado = service.atualizar(id, emprestimo);
             return ResponseEntity.ok(atualizado);
 

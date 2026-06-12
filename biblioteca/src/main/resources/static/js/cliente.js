@@ -1,4 +1,3 @@
-// Aponta fixamente para o backend do Spring Boot, independente da porta do frontend
 const API_BASE_URL = "http://localhost:8080";
 const API_URL = `${API_BASE_URL}/api/clientes`;
 const SESSAO_STORAGE_KEY = "biblioteca_usuario_logado";
@@ -9,7 +8,6 @@ const tabelaClientesBody = document.querySelector("#tabela-clientes tbody");
 
 let usuarioLogado = null;
 
-// Inicializa a tela conforme o perfil do usuario logado.
 document.addEventListener("DOMContentLoaded", inicializarTelaClientes);
 
 if (formCliente) {
@@ -31,7 +29,6 @@ function inicializarTelaClientes() {
     listarClientes();
 }
 
-// Aluno ve somente os proprios dados, nunca a lista de outros clientes.
 function prepararTelaDoAluno() {
     document.getElementById("lista-clientes-card")?.classList.add("hidden");
     document.getElementById("perfil-aluno-card")?.classList.remove("hidden");
@@ -60,33 +57,35 @@ function preencherPerfilAluno() {
     const nome = document.getElementById("perfil-aluno-nome");
     const email = document.getElementById("perfil-aluno-email");
 
-    if (nome) nome.innerText = usuarioLogado?.nome || "Meus dados";
+    if (nome) nome.innerText = usuarioLogado?.nomeCompleto || usuarioLogado?.nome || "Meus dados";
     if (email) email.innerText = usuarioLogado?.email || "";
 
     if (!avatar) return;
 
     if (usuarioLogado?.foto) {
-        avatar.innerHTML = `<img src="${usuarioLogado.foto}" alt="Foto de ${usuarioLogado.nome}">`;
+        avatar.innerHTML = `<img src="${usuarioLogado.foto}" alt="Foto">`;
     } else {
-        avatar.innerText = obterIniciais(usuarioLogado?.nome);
+        avatar.innerText = obterIniciais(usuarioLogado?.nomeCompleto || usuarioLogado?.nome);
     }
 }
 
 function preencherFormularioAluno() {
-    const dadosAluno = carregarUsuarios().find(usuario => usuario.email === usuarioLogado?.email) || usuarioLogado;
+    const usuarios = carregarUsuarios();
+    const dadosAluno = usuarios.find(u => u.email === usuarioLogado?.email) || usuarioLogado;
 
-    document.getElementById("cliente-id").value = "";
-    document.getElementById("nome-completo").value = dadosAluno.nomeCompleto || dadosAluno.nome || "";
-    document.getElementById("telefone").value = dadosAluno.telefone || dadosAluno.whatsapp || "";
-    document.getElementById("email").value = dadosAluno.email || "";
-    document.getElementById("cpf").value = dadosAluno.cpf || "";
-    document.getElementById("cep").value = dadosAluno.cep || "";
-    document.getElementById("rua").value = dadosAluno.rua || "";
-    document.getElementById("numero-casa").value = dadosAluno.numeroCasa || "";
-    document.getElementById("referencia").value = dadosAluno.referencia || "";
+    document.getElementById("cliente-id").value = dadosAluno?.id || "";
+    document.getElementById("nome-completo").value = dadosAluno?.nomeCompleto || dadosAluno?.nome || "";
+    document.getElementById("telefone").value = dadosAluno?.telefone || "";
+    document.getElementById("email").value = dadosAluno?.email || "";
+    document.getElementById("senha").value = "";
+    document.getElementById("cpf").value = dadosAluno?.cpf || "";
+    document.getElementById("perfil").value = dadosAluno?.perfil || "ALUNO";
+    document.getElementById("cep").value = dadosAluno?.cep || "";
+    document.getElementById("rua").value = dadosAluno?.rua || "";
+    document.getElementById("numero-casa").value = dadosAluno?.numeroCasa || "";
+    document.getElementById("referencia").value = dadosAluno?.referencia || "";
 }
 
-// Busca todos os clientes no backend e renderiza a lista somente para bibliotecario.
 async function listarClientes() {
     if (!tabelaClientesBody) return;
 
@@ -111,9 +110,10 @@ async function listarClientes() {
                 <td class="text-left font-serif bold">${cliente.nomeCompleto || ""}</td>
                 <td class="text-center bold">${cliente.telefone || ""}</td>
                 <td class="text-left">${cliente.email || ""}</td>
+                <td class="text-center bold">${cliente.perfil || "ALUNO"}</td>
+                <td class="text-center bold">${cliente.cpf || ""}</td>
                 <td class="text-center bold">${cliente.cep || ""}</td>
                 <td class="text-left">${endereco}</td>
-                <td class="text-left">${cliente.referencia || ""}</td>
                 <td class="text-center">
                     <div class="action-buttons">
                         <button class="btn-action btn-edit" onclick="editarCliente('${cliente.id}')">Editar</button>
@@ -121,7 +121,6 @@ async function listarClientes() {
                     </div>
                 </td>
             `;
-
             tabelaClientesBody.appendChild(tr);
         });
     } catch (error) {
@@ -130,15 +129,48 @@ async function listarClientes() {
     }
 }
 
-// Salva no backend para bibliotecario; para aluno atualiza somente os proprios dados locais.
 async function salvarCliente() {
     if (usuarioLogado?.perfil === "ALUNO") {
-        atualizarDadosAluno();
+        await atualizarDadosAluno();
         return;
     }
 
     const id = document.getElementById("cliente-id").value;
-    const dadosCliente = obterDadosFormularioCliente();
+    
+    // Obter TODOS os campos com valores padrão (NUNCA null)
+    const dadosCliente = {
+        nomeCompleto: document.getElementById("nome-completo")?.value || "Nome não informado",
+        telefone: document.getElementById("telefone")?.value || "",
+        email: document.getElementById("email")?.value || "email@exemplo.com",
+        senha: document.getElementById("senha")?.value || "senha123",
+        cpf: document.getElementById("cpf")?.value || "00000000000",
+        perfil: document.getElementById("perfil")?.value || "ALUNO",
+        cep: document.getElementById("cep")?.value || "00000000",
+        rua: document.getElementById("rua")?.value || "Rua não informada",
+        numeroCasa: document.getElementById("numero-casa")?.value || "0",
+        referencia: document.getElementById("referencia")?.value || "",
+        ativo: true,
+        whatsapp: document.getElementById("telefone")?.value || "",
+        instituicao: ""
+    };
+
+    // Validar se os campos OBRIGATÓRIOS foram preenchidos (não os padrão)
+    if (dadosCliente.nomeCompleto === "Nome não informado") {
+        alert("Por favor, preencha o Nome Completo");
+        return;
+    }
+    
+    if (dadosCliente.email === "email@exemplo.com") {
+        alert("Por favor, preencha o Email");
+        return;
+    }
+    
+    if (document.getElementById("senha")?.value === "") {
+        alert("Por favor, preencha a Senha");
+        return;
+    }
+
+    console.log("Enviando dados:", dadosCliente);
 
     try {
         let url = API_URL;
@@ -147,6 +179,10 @@ async function salvarCliente() {
         if (id) {
             url = `${API_URL}/${id}`;
             metodo = "PUT";
+            // Para update, não enviar senha se estiver vazia
+            if (!document.getElementById("senha")?.value) {
+                delete dadosCliente.senha;
+            }
         }
 
         const response = await fetch(url, {
@@ -157,49 +193,55 @@ async function salvarCliente() {
             body: JSON.stringify(dadosCliente)
         });
 
-        if (!response.ok) throw new Error("Erro ao salvar cliente");
+        if (!response.ok) {
+            const erroText = await response.text();
+            console.error("Erro do backend:", erroText);
+            throw new Error("Erro ao salvar cliente");
+        }
 
+        alert(id ? "Cliente atualizado com sucesso!" : "Cliente cadastrado com sucesso!");
         resetarFormulario();
         listarClientes();
+        
     } catch (error) {
         console.error("Erro ao salvar cliente:", error);
-        alert("Ocorreu um erro ao salvar o cliente.");
+        alert("Ocorreu um erro ao salvar o cliente. Verifique se todos os campos obrigatórios estão preenchidos.");
     }
 }
 
-function obterDadosFormularioCliente() {
-    return {
-        nomeCompleto: document.getElementById("nome-completo").value,
-        telefone: document.getElementById("telefone").value,
-        email: document.getElementById("email").value,
-        cpf: document.getElementById("cpf").value,
-        cep: document.getElementById("cep").value,
-        rua: document.getElementById("rua").value,
-        numeroCasa: document.getElementById("numero-casa").value,
-        referencia: document.getElementById("referencia").value,
+async function atualizarDadosAluno() {
+    // Obter dados com valores padrão
+    const dados = {
+        nomeCompleto: document.getElementById("nome-completo")?.value || "",
+        telefone: document.getElementById("telefone")?.value || "",
+        email: document.getElementById("email")?.value || "",
+        senha: document.getElementById("senha")?.value || "",
+        cpf: document.getElementById("cpf")?.value || "",
+        perfil: "ALUNO",
+        cep: document.getElementById("cep")?.value || "",
+        rua: document.getElementById("rua")?.value || "",
+        numeroCasa: document.getElementById("numero-casa")?.value || "",
+        referencia: document.getElementById("referencia")?.value || "",
         ativo: true
     };
-}
-
-async function atualizarDadosAluno() {
-    const dados = obterDadosFormularioCliente();
+    
+    // Validar campos obrigatórios
+    if (!dados.nomeCompleto || !dados.email || !dados.cpf) {
+        alert("Nome, Email e CPF são obrigatórios!");
+        return;
+    }
+    
     const usuarios = carregarUsuarios();
-    const indiceUsuario = usuarios.findIndex(usuario => usuario.email === usuarioLogado.email);
+    const indiceUsuario = usuarios.findIndex(u => u.email === usuarioLogado.email);
 
     const usuarioAtualizado = {
-        ...usuarios[indiceUsuario],
         ...usuarioLogado,
-        nome: dados.nomeCompleto,
-        nomeCompleto: dados.nomeCompleto,
-        telefone: dados.telefone,
-        whatsapp: dados.telefone,
-        email: dados.email,
-        cpf: dados.cpf,
-        cep: dados.cep,
-        rua: dados.rua,
-        numeroCasa: dados.numeroCasa,
-        referencia: dados.referencia
+        ...dados
     };
+    
+    if (dados.senha && dados.senha !== "") {
+        usuarioAtualizado.senha = dados.senha;
+    }
 
     if (indiceUsuario >= 0) {
         usuarios[indiceUsuario] = usuarioAtualizado;
@@ -210,37 +252,55 @@ async function atualizarDadosAluno() {
     usuarioLogado = usuarioAtualizado;
     preencherPerfilAluno();
 
-    const salvoNoBackend = await salvarDadosAlunoNoBackend(dados);
+    const salvoNoBackend = await salvarDadosAlunoNoBackend(usuarioAtualizado);
     if (salvoNoBackend) {
         alert("Seus dados foram atualizados no sistema.");
-        return;
+    } else {
+        alert("Seus dados foram atualizados localmente.");
     }
-
-    alert("Seus dados foram atualizados nesta sessao, mas nao foi possivel salvar no backend.");
 }
 
-// Sincroniza os dados do aluno com o backend usando a API de clientes existente.
 async function salvarDadosAlunoNoBackend(dados) {
     try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error("Erro ao consultar clientes");
-
-        const clientes = await response.json();
-        const clienteExistente = clientes.find(cliente => cliente.email === usuarioLogado.email || cliente.email === dados.email);
-        const url = clienteExistente ? `${API_URL}/${clienteExistente.id}` : API_URL;
-        const metodo = clienteExistente ? "PUT" : "POST";
-
-        const salvarResponse = await fetch(url, {
-            method: metodo,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(dados)
-        });
-
-        return salvarResponse.ok;
+        const dadosEnvio = {
+            nomeCompleto: dados.nomeCompleto || "",
+            telefone: dados.telefone || "",
+            email: dados.email || "",
+            cpf: dados.cpf || "00000000000",
+            perfil: "ALUNO",
+            cep: dados.cep || "",
+            rua: dados.rua || "",
+            numeroCasa: dados.numeroCasa || "",
+            referencia: dados.referencia || "",
+            ativo: true
+        };
+        
+        if (dados.senha) {
+            dadosEnvio.senha = dados.senha;
+        }
+        
+        if (dados.id) {
+            const response = await fetch(`${API_URL}/${dados.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dadosEnvio)
+            });
+            return response.ok;
+        } else {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dadosEnvio)
+            });
+            if (response.ok) {
+                const novoCliente = await response.json();
+                dados.id = novoCliente.id;
+                localStorage.setItem(SESSAO_STORAGE_KEY, JSON.stringify(dados));
+            }
+            return response.ok;
+        }
     } catch (error) {
-        console.error("Erro ao salvar dados do aluno no backend:", error);
+        console.error("Erro ao salvar no backend:", error);
         return false;
     }
 }
@@ -256,19 +316,22 @@ async function editarCliente(id) {
         document.getElementById("nome-completo").value = cliente.nomeCompleto || "";
         document.getElementById("telefone").value = cliente.telefone || "";
         document.getElementById("email").value = cliente.email || "";
+        document.getElementById("senha").value = "";
         document.getElementById("cpf").value = cliente.cpf || "";
+        document.getElementById("perfil").value = cliente.perfil || "ALUNO";
         document.getElementById("cep").value = cliente.cep || "";
         document.getElementById("rua").value = cliente.rua || "";
         document.getElementById("numero-casa").value = cliente.numeroCasa || "";
         document.getElementById("referencia").value = cliente.referencia || "";
 
-        if (document.getElementById("titulo-form")) document.getElementById("titulo-form").innerText = "Atualizar Cliente";
-        if (document.getElementById("btn-salvar")) document.getElementById("btn-salvar").innerText = "Atualizar";
-        if (document.getElementById("btn-cancelar")) document.getElementById("btn-cancelar").style.display = "block";
+        document.getElementById("titulo-form").innerText = "Atualizar Cliente";
+        document.getElementById("btn-salvar").innerText = "Atualizar";
+        document.getElementById("btn-cancelar").style.display = "block";
 
         window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
-        console.error("Erro ao carregar cliente para edicao:", error);
+        console.error("Erro ao carregar cliente:", error);
+        alert("Erro ao carregar dados do cliente.");
     }
 }
 
@@ -282,6 +345,7 @@ async function deletarCliente(id) {
 
         if (!response.ok) throw new Error("Erro ao deletar cliente");
 
+        alert("Cliente excluído com sucesso!");
         listarClientes();
     } catch (error) {
         console.error("Erro ao deletar cliente:", error);
@@ -291,6 +355,7 @@ async function deletarCliente(id) {
 
 function resetarFormulario() {
     if (!formCliente) return;
+    
     if (usuarioLogado?.perfil === "ALUNO") {
         preencherFormularioAluno();
         return;
@@ -298,9 +363,18 @@ function resetarFormulario() {
 
     formCliente.reset();
     document.getElementById("cliente-id").value = "";
-    if (document.getElementById("titulo-form")) document.getElementById("titulo-form").innerText = "Cadastrar Cliente";
-    if (document.getElementById("btn-salvar")) document.getElementById("btn-salvar").innerText = "Salvar";
-    if (document.getElementById("btn-cancelar")) document.getElementById("btn-cancelar").style.display = "none";
+    document.getElementById("senha").value = "";
+    document.getElementById("perfil").value = "";
+    document.getElementById("titulo-form").innerText = "Cadastrar Cliente";
+    document.getElementById("btn-salvar").innerText = "Salvar";
+    document.getElementById("btn-cancelar").style.display = "none";
+}
+
+function fecharTela() {
+    if (confirm("Deseja realmente sair do sistema?")) {
+        localStorage.removeItem(SESSAO_STORAGE_KEY);
+        window.location.href = './login.html';
+    }
 }
 
 function carregarUsuarios() {
@@ -308,7 +382,8 @@ function carregarUsuarios() {
 }
 
 function obterIniciais(nome) {
-    return String(nome || "AL")
+    if (!nome) return "AL";
+    return String(nome)
         .split(" ")
         .filter(Boolean)
         .slice(0, 2)
