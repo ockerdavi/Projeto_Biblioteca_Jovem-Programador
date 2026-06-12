@@ -62,6 +62,8 @@ Postman: Testes dos endpoints
 
 src/
 
+├── config/
+
 ├── model/
 
 ├── repository/
