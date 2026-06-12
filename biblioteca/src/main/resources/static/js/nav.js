@@ -14,13 +14,13 @@ function mostrarUsuarioLogado() {
     chip.className = "user-chip";
 
     const foto = usuario.foto
-        ? `<img src="${usuario.foto}" alt="Foto de ${usuario.nome}">`
-        : `<span class="user-avatar">${obterIniciais(usuario.nome)}</span>`;
+        ? `<img src="${usuario.foto}" alt="Foto de ${usuario.nomeCompleto || usuario.nome}">`
+        : `<span class="user-avatar">${obterIniciais(usuario.nomeCompleto || usuario.nome)}</span>`;
 
     chip.innerHTML = `
         ${foto}
         <div>
-            <strong>${usuario.nome}</strong>
+            <strong>${usuario.nomeCompleto || usuario.nome}</strong>
             <small>${usuario.instituicao || usuario.perfil || ""}</small>
         </div>
     `;
@@ -58,24 +58,49 @@ function carregarReservasPendentes() {
     return reservas.filter(reserva => reserva.status === "PENDENTE").length;
 }
 
-// Encerra a sessao local e volta para o login.
+// ============================================
+// FUNÇÕES DE LOGOUT CORRIGIDAS
+// ============================================
+
+// Função principal para fazer logout e sair do sistema
 function sairDoSistema() {
+    if (confirm("Tem certeza que deseja sair do sistema?")) {
+        // Remove os dados da sessão
+        localStorage.removeItem(SESSAO_STORAGE_KEY_NAV);
+        
+        // Opcional: limpar também as reservas se quiser
+        // localStorage.removeItem(RESERVAS_STORAGE_KEY_NAV);
+        
+        // Redireciona para a tela de login
+        window.location.href = "./login.html";
+    }
+}
+
+// Função chamada pelo botão "Fechar" ou "Sair"
+function fecharTela() {
+    if (confirm("Deseja realmente sair do sistema?")) {
+        // Remove o usuário logado
+        localStorage.removeItem(SESSAO_STORAGE_KEY_NAV);
+        
+        // Redireciona para o login
+        window.location.href = "./login.html";
+    }
+}
+
+// Função alternativa (tenta fechar a aba, mas se não conseguir, faz logout)
+function fecharOuSair() {
+    // Primeiro faz o logout
     localStorage.removeItem(SESSAO_STORAGE_KEY_NAV);
+    
+    // Tenta fechar a janela
+    // window.close() não funciona sempre em navegadores modernos quando a página não foi aberta por script.
+    // Em vez disso, redirecionamos para a tela de login para garantir comportamento consistente.
     window.location.href = "./login.html";
 }
 
-// Tenta fechar a aba; se o navegador bloquear, volta para o login.
-function fecharTela() {
-    window.close();
-    setTimeout(function () {
-        if (!window.closed) {
-            window.location.href = "./login.html";
-        }
-    }, 150);
-}
-
 function obterIniciais(nome) {
-    return String(nome || "U")
+    if (!nome) return "U";
+    return String(nome)
         .split(" ")
         .filter(Boolean)
         .slice(0, 2)

@@ -1,302 +1,308 @@
 const API_BASE_URL = "http://localhost:8080";
-const CLIENTES_API_URL = `${API_BASE_URL}/api/clientes`;
-const LIVROS_API_URL = `${API_BASE_URL}/api/livros`;
-const EMPRESTIMOS_API_URL = `${API_BASE_URL}/api/emprestimos`;
-const STORAGE_KEY = "biblioteca_emprestimos_teste";
+const API_CLIENTES = `${API_BASE_URL}/api/clientes`;
+const API_LIVROS = `${API_BASE_URL}/api/livros`;
+const API_EMPRESTIMOS = `${API_BASE_URL}/api/emprestimos`;
 
-const formEmprestimo = document.getElementById("form-emprestimo");
+const form = document.getElementById("form-emprestimo");
 const selectCliente = document.getElementById("cliente");
 const selectLivro = document.getElementById("livro");
-const tabelaEmprestimosBody = document.querySelector("#tabela-emprestimos tbody");
+const livroDisponivel = document.getElementById("livro-disponivel");
+const tabelaBody = document.getElementById("tabela-emprestimos-body");
+const badgeTotal = document.getElementById("badge-total");
 
-let clientes = [];
-let livros = [];
-let emprestimos = [];
-let modoTesteLocal = false;
+let livrosCache = [];
 
-// Inicializa a tela carregando dados reais quando existirem, ou dados locais de teste.
-document.addEventListener("DOMContentLoaded", inicializarTela);
+document.addEventListener("DOMContentLoaded", () => {
+    carregarClientes();
+    carregarLivros();
+    carregarEmprestimos();
+});
 
-if (formEmprestimo) {
-    formEmprestimo.addEventListener("submit", function (event) {
-        event.preventDefault();
-        registrarEmprestimo();
+if (form) {
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await registrarEmprestimo();
     });
 }
 
-async function inicializarTela() {
-    clientes = await carregarLista(CLIENTES_API_URL, obterClientesTeste());
-    livros = await carregarLista(LIVROS_API_URL, obterLivrosTeste());
-    emprestimos = await carregarEmprestimos();
-
-    preencherSelectClientes();
-    preencherSelectLivros();
-    renderizarEmprestimos();
+async function carregarClientes() {
+    try {
+        const response = await fetch(API_CLIENTES);
+        if (!response.ok) throw new Error("Erro ao carregar clientes");
+        const clientes = await response.json();
+        
+        if (selectCliente) {
+            selectCliente.innerHTML = '<option value="">Selecione um cliente</option>';
+            clientes.forEach(cliente => {
+                const option = document.createElement("option");
+                option.value = cliente.id;
+                option.textContent = `${cliente.nomeCompleto} - ${cliente.email}`;
+                selectCliente.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error("Erro ao carregar clientes:", error);
+    }
 }
 
-// Tenta buscar dados no backend. Se falhar, usa dados locais para teste visual.
-async function carregarLista(url, fallback) {
+async function carregarLivros() {
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Backend indisponivel");
-        return await response.json();
+        const response = await fetch(API_LIVROS);
+        if (!response.ok) throw new Error("Erro ao carregar livros");
+        livrosCache = await response.json();
+        
+        if (selectLivro) {
+            selectLivro.innerHTML = '<option value="">Selecione um livro</option>';
+            livrosCache.forEach(livro => {
+                const qtdDisponivel = livro.quantidadeDisponivel ?? livro.quantidadeTotal ?? 0;
+                const option = document.createElement("option");
+                option.value = livro.id;
+                option.textContent = `${livro.titulo} (${qtdDisponivel} disponíveis)`;
+                option.disabled = qtdDisponivel <= 0;
+                selectLivro.appendChild(option);
+            });
+        }
+        
+        if (selectLivro) {
+            selectLivro.addEventListener("change", () => {
+                const livroId = selectLivro.value;
+                const livro = livrosCache.find(l => l.id == livroId);
+                if (livro && livroDisponivel) {
+                    const multa = livro.valorMultaDiaria ? `R$ ${livro.valorMultaDiaria}` : "R$ 2,00";
+                    livroDisponivel.textContent = `Disponíveis: ${livro.quantidadeDisponivel ?? livro.quantidadeTotal} | Multa padrão: ${multa}`;
+                } else if (livroDisponivel) {
+                    livroDisponivel.textContent = "";
+                }
+            });
+        }
     } catch (error) {
-        modoTesteLocal = true;
-        return fallback;
+        console.error("Erro ao carregar livros:", error);
     }
 }
 
 async function carregarEmprestimos() {
+    if (!tabelaBody) return;
+    
     try {
-        const response = await fetch(EMPRESTIMOS_API_URL);
-        if (!response.ok) throw new Error("Backend indisponivel");
-        return await response.json();
+        const response = await fetch(API_EMPRESTIMOS);
+        if (!response.ok) throw new Error("Erro ao carregar empréstimos");
+        
+        const emprestimos = await response.json();
+        tabelaBody.innerHTML = "";
+        
+        if (badgeTotal) {
+            badgeTotal.innerText = `Emprestimos - ${emprestimos.length} registros`;
+        }
+        
+        if (emprestimos.length === 0) {
+            tabelaBody.innerHTML = '<tr><td colspan="10" class="text-center">Nenhum empréstimo registrado</td></tr>';
+            return;
+        }
+        
+        emprestimos.forEach(emp => {
+            const tr = document.createElement("tr");
+            const dataEmprestimo = emp.dataEmprestimo ? formatarData(emp.dataEmprestimo) : "-";
+            const dataPrevista = emp.dataPrevistaEntrega ? formatarData(emp.dataPrevistaEntrega) : "-";
+            const dataEntrega = emp.dataEntrega ? formatarData(emp.dataEntrega) : "-";
+            const multa = emp.multa ? `R$ ${emp.multa}` : "R$ 0,00";
+            
+            let statusClass = "";
+            let statusTexto = emp.status || "-";
+            switch (emp.status) {
+                case "PENDENTE":
+                    statusClass = "status-pendente";
+                    statusTexto = "⏳ Pendente";
+                    break;
+                case "AUTORIZADA":
+                    statusClass = "status-autorizada";
+                    statusTexto = "✅ Autorizada";
+                    break;
+                case "EM_ANDAMENTO":
+                    statusClass = "status-emprestado";
+                    statusTexto = "📚 Em andamento";
+                    break;
+                case "DEVOLVIDO":
+                    statusClass = "status-devolvido";
+                    statusTexto = "✔️ Devolvido";
+                    break;
+                case "DEVOLVIDO_COM_MULTA":
+                    statusClass = "status-multa";
+                    statusTexto = "⚠️ Devolvido com multa";
+                    break;
+            }
+            
+            tr.innerHTML = `
+                <td class="text-center">${String(emp.id).padStart(2, "0")}</td>
+                <td class="text-left font-serif bold">${emp.cliente?.nomeCompleto || "-"}</td>
+                <td class="text-left">${emp.livro?.titulo || "-"}</td>
+                <td class="text-center">${dataEmprestimo}</td>
+                <td class="text-center">${dataPrevista}</td>
+                <td class="text-center">${dataEntrega}</td>
+                <td class="text-center">${emp.diasPermitidos || "-"}</td>
+                <td class="text-center ${statusClass} bold">${statusTexto}</td>
+                <td class="text-center bold">${multa}</td>
+                <td class="text-center">
+                    <div class="action-buttons">
+                        ${emp.status === "EM_ANDAMENTO" ? `<button class="btn-action btn-edit" onclick="devolverLivro(${emp.id})">📦 Devolver</button>` : ""}
+                        ${emp.status === "PENDENTE" ? `<button class="btn-action btn-edit" onclick="autorizarReserva(${emp.id})">✅ Autorizar</button>` : ""}
+                        ${emp.status === "AUTORIZADA" ? `<button class="btn-action btn-delete" onclick="darBaixaReserva(${emp.id})">📖 Dar baixa</button>` : ""}
+                    </div>
+                </td>
+            `;
+            tabelaBody.appendChild(tr);
+        });
     } catch (error) {
-        modoTesteLocal = true;
-        return carregarEmprestimosTeste();
+        console.error("Erro ao carregar empréstimos:", error);
+        tabelaBody.innerHTML = '<tr><td colspan="10" class="text-center">Erro ao carregar empréstimos</td></tr>';
     }
 }
 
-function preencherSelectClientes() {
-    selectCliente.innerHTML = '<option value="">Selecione um cliente</option>';
-
-    clientes.forEach(cliente => {
-        const option = document.createElement("option");
-        option.value = cliente.id;
-        option.innerText = cliente.nomeCompleto;
-        selectCliente.appendChild(option);
-    });
-}
-
-function preencherSelectLivros() {
-    selectLivro.innerHTML = '<option value="">Selecione um livro</option>';
-
-    livros.forEach(livro => {
-        const disponiveis = livro.quantidadeDisponivel ?? 0;
-        const option = document.createElement("option");
-        option.value = livro.id;
-        option.disabled = disponiveis <= 0;
-        option.innerText = `${livro.titulo} (${disponiveis} disponiveis)`;
-        selectLivro.appendChild(option);
-    });
-}
-
-// Registra o emprestimo no backend. Se a API estiver indisponivel, usa o modo local de teste.
 async function registrarEmprestimo() {
-    const cliente = clientes.find(item => String(item.id) === selectCliente.value);
-    const livro = livros.find(item => String(item.id) === selectLivro.value);
-    const diasPermitidos = Number(document.getElementById("dias-permitidos").value);
-    const valorMultaDiaria = Number(document.getElementById("valor-multa-diaria").value);
-
-    if (!cliente || !livro) {
-        alert("Selecione um cliente e um livro.");
+    if (!selectCliente || !selectLivro) {
+        console.error("Elementos do formulário não encontrados");
+        alert("Erro: Formulário não carregado corretamente");
         return;
     }
-
-    if (!modoTesteLocal) {
-        try {
-            const response = await fetch(EMPRESTIMOS_API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    clienteId: Number(selectCliente.value),
-                    livroId: Number(selectLivro.value),
-                    diasPermitidos,
-                    valorMultaDiaria
-                })
-            });
-
-            if (!response.ok) throw new Error("Erro ao registrar emprestimo");
-
-            resetarFormulario();
-            await recarregarDadosDoBackend();
-            return;
-        } catch (error) {
-            console.error("Erro ao registrar emprestimo no backend:", error);
-            alert("Nao foi possivel registrar o emprestimo no banco de dados.");
-            return;
-        }
+    
+    const clienteId = selectCliente.value;
+    const livroId = selectLivro.value;
+    const diasPermitidosInput = document.getElementById("diasPermitidos");
+    const multaDiariaInput = document.getElementById("multaDiaria");
+    const statusInput = document.getElementById("status");
+    
+    if (!diasPermitidosInput) {
+        console.error("Campo 'diasPermitidos' não encontrado");
+        alert("Erro: Campo 'Dias permitidos' não encontrado");
+        return;
     }
-
-    const hoje = new Date();
-    const dataPrevista = new Date(hoje);
-    dataPrevista.setDate(hoje.getDate() + diasPermitidos);
-
-    const novoEmprestimo = {
-        id: obterProximoId(),
-        cliente,
-        livro,
-        dataEmprestimo: formatarDataISO(hoje),
-        dataPrevistaEntrega: formatarDataISO(dataPrevista),
-        dataEntrega: null,
-        diasPermitidos,
-        status: "EMPRESTADO",
-        multa: 0,
-        valorMultaDiaria
+    
+    const diasPermitidos = diasPermitidosInput.value;
+    const status = statusInput ? statusInput.value : "EM_ANDAMENTO";
+    
+    if (!clienteId || !livroId || !diasPermitidos) {
+        alert("Preencha todos os campos obrigatórios!");
+        return;
+    }
+    
+    // Payload SEM o campo valorMultaDiaria - o backend busca do livro
+    const payload = {
+        clienteId: parseInt(clienteId),
+        livroId: parseInt(livroId),
+        diasPermitidos: parseInt(diasPermitidos),
+        status: status
     };
-
-    emprestimos.push(novoEmprestimo);
-    salvarEmprestimosTeste();
-    resetarFormulario();
-    renderizarEmprestimos();
-
-    if (modoTesteLocal) {
-        console.info("Emprestimo registrado em modo de teste local. Nenhum dado foi enviado ao backend.");
-    }
-}
-
-async function recarregarDadosDoBackend() {
-    clientes = await carregarLista(CLIENTES_API_URL, obterClientesTeste());
-    livros = await carregarLista(LIVROS_API_URL, obterLivrosTeste());
-    emprestimos = await carregarEmprestimos();
-
-    preencherSelectClientes();
-    preencherSelectLivros();
-    renderizarEmprestimos();
-}
-
-// Renderiza os emprestimos cadastrados no backend ou no modo local.
-function renderizarEmprestimos() {
-    if (!tabelaEmprestimosBody) return;
-
-    tabelaEmprestimosBody.innerHTML = "";
-
-    const badgeTotal = document.getElementById("badge-total");
-    if (badgeTotal) {
-        badgeTotal.innerText = `Emprestimos - ${emprestimos.length} registros`;
-    }
-
-    emprestimos.forEach(emprestimo => {
-        const tr = document.createElement("tr");
-        const multa = Number(emprestimo.multa || 0).toFixed(2);
-        const valorMultaDiaria = Number(emprestimo.valorMultaDiaria || 0).toFixed(2);
-        const podeDevolver = ["EMPRESTADO", "EM_ANDAMENTO", "ATRASADO"].includes(emprestimo.status);
-
-        tr.innerHTML = `
-            <td class="text-center">${String(emprestimo.id).padStart(2, "0")}</td>
-            <td class="text-left font-serif bold">${emprestimo.cliente?.nomeCompleto || ""}</td>
-            <td class="text-left">${emprestimo.livro?.titulo || ""}</td>
-            <td class="text-center bold">${formatarDataTela(emprestimo.dataEmprestimo)}</td>
-            <td class="text-center bold">${formatarDataTela(emprestimo.dataPrevistaEntrega)}</td>
-            <td class="text-center bold">${formatarDataTela(emprestimo.dataEntrega)}</td>
-            <td class="text-center bold">${emprestimo.diasPermitidos || ""}</td>
-            <td class="text-center bold">${emprestimo.status || ""}</td>
-            <td class="text-center bold">R$ ${multa}</td>
-            <td class="text-center bold">R$ ${valorMultaDiaria}</td>
-            <td class="text-center">
-                <div class="action-buttons">
-                    <button class="btn-action btn-edit" onclick="devolverEmprestimo('${emprestimo.id}')" ${podeDevolver ? "" : "disabled"}>Devolver</button>
-                    <button class="btn-action btn-delete" onclick="removerEmprestimo('${emprestimo.id}')">Excluir</button>
-                </div>
-            </td>
-        `;
-
-        tabelaEmprestimosBody.appendChild(tr);
-    });
-}
-
-async function devolverEmprestimo(id) {
-    if (!modoTesteLocal) {
-        try {
-            const response = await fetch(`${EMPRESTIMOS_API_URL}/devolver/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({})
-            });
-
-            if (!response.ok) throw new Error("Erro ao devolver emprestimo");
-
-            await recarregarDadosDoBackend();
-            return;
-        } catch (error) {
-            console.error("Erro ao devolver emprestimo no backend:", error);
-            alert("Nao foi possivel registrar a devolucao no banco de dados.");
-            return;
+    
+    console.log("Enviando payload:", payload);
+    
+    try {
+        const response = await fetch(API_EMPRESTIMOS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+            const erro = await response.text();
+            throw new Error(erro || "Erro ao registrar empréstimo");
         }
+        
+        const emprestimo = await response.json();
+        alert(`Empréstimo registrado com sucesso!`);
+        resetarFormulario();
+        carregarEmprestimos();
+        carregarLivros();
+    } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro ao registrar empréstimo: " + error.message);
     }
-
-    const emprestimo = emprestimos.find(item => String(item.id) === String(id));
-    if (!emprestimo) return;
-
-    emprestimo.dataEntrega = formatarDataISO(new Date());
-    emprestimo.status = "ENTREGUE";
-    emprestimo.multa = 0;
-
-    salvarEmprestimosTeste();
-    renderizarEmprestimos();
 }
 
-async function removerEmprestimo(id) {
-    if (!confirm("Deseja realmente excluir este emprestimo?")) return;
-
-    if (!modoTesteLocal) {
-        try {
-            const response = await fetch(`${EMPRESTIMOS_API_URL}/${id}`, {
-                method: "DELETE"
-            });
-
-            if (!response.ok) throw new Error("Erro ao excluir emprestimo");
-
-            await recarregarDadosDoBackend();
-            return;
-        } catch (error) {
-            console.error("Erro ao excluir emprestimo no backend:", error);
-            alert("Nao foi possivel excluir o emprestimo no banco de dados.");
-            return;
-        }
+async function devolverLivro(id) {
+    if (!confirm("Confirmar devolução do livro?")) return;
+    
+    try {
+        const response = await fetch(`${API_EMPRESTIMOS}/devolver/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" }
+        });
+        
+        if (!response.ok) throw new Error("Erro ao registrar devolução");
+        
+        alert("Devolução registrada com sucesso!");
+        carregarEmprestimos();
+        carregarLivros();
+    } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro ao registrar devolução: " + error.message);
     }
+}
 
-    emprestimos = emprestimos.filter(item => String(item.id) !== String(id));
-    salvarEmprestimosTeste();
-    renderizarEmprestimos();
+async function autorizarReserva(id) {
+    if (!confirm("Autorizar esta reserva?")) return;
+    
+    try {
+        const response = await fetch(`${API_EMPRESTIMOS}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "AUTORIZADA" })
+        });
+        
+        if (!response.ok) throw new Error("Erro ao autorizar reserva");
+        
+        alert("Reserva autorizada com sucesso!");
+        carregarEmprestimos();
+        carregarLivros();
+    } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro ao autorizar reserva: " + error.message);
+    }
+}
+
+async function darBaixaReserva(id) {
+    if (!confirm("Confirmar retirada do livro?")) return;
+    
+    try {
+        const response = await fetch(`${API_EMPRESTIMOS}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "EM_ANDAMENTO" })
+        });
+        
+        if (!response.ok) throw new Error("Erro ao registrar retirada");
+        
+        alert("Retirada registrada com sucesso!");
+        carregarEmprestimos();
+        carregarLivros();
+    } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro ao registrar retirada: " + error.message);
+    }
 }
 
 function resetarFormulario() {
-    if (!formEmprestimo) return;
-    formEmprestimo.reset();
-    document.getElementById("dias-permitidos").value = 7;
-    document.getElementById("valor-multa-diaria").value = "2.00";
+    if (form) form.reset();
+    if (selectCliente) selectCliente.value = "";
+    if (selectLivro) selectLivro.value = "";
+    if (livroDisponivel) livroDisponivel.textContent = "";
+    
+    const diasPermitidosInput = document.getElementById("diasPermitidos");
+    if (diasPermitidosInput) diasPermitidosInput.value = "7";
+    
+    const multaInput = document.getElementById("multaDiaria");
+    if (multaInput) multaInput.value = "";
+    
+    const statusInput = document.getElementById("status");
+    if (statusInput) statusInput.value = "EM_ANDAMENTO";
 }
 
-// Dados locais usados apenas enquanto nao houver EmprestimoController.
-function obterClientesTeste() {
-    return [
-        { id: 1, nomeCompleto: "Cliente Teste", telefone: "48999990000", email: "cliente@teste.com" },
-        { id: 2, nomeCompleto: "Alexandre Milton Alves", telefone: "48996275324", email: "ditecalexandre@gmail.com" }
-    ];
-}
-
-function obterLivrosTeste() {
-    return [
-        { id: 1, titulo: "Dom Casmurro", quantidadeDisponivel: 10 },
-        { id: 2, titulo: "O Cortico", quantidadeDisponivel: 4 }
-    ];
-}
-
-function carregarEmprestimosTeste() {
-    const dadosSalvos = localStorage.getItem(STORAGE_KEY);
-    return dadosSalvos ? JSON.parse(dadosSalvos) : [];
-}
-
-function salvarEmprestimosTeste() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(emprestimos));
-}
-
-function obterProximoId() {
-    if (emprestimos.length === 0) return 1;
-    return Math.max(...emprestimos.map(item => Number(item.id))) + 1;
-}
-
-function formatarDataISO(data) {
-    return data.toISOString().split("T")[0];
-}
-
-function formatarDataTela(dataISO) {
-    if (!dataISO) return "";
+function formatarData(dataISO) {
+    if (!dataISO) return "-";
     const [ano, mes, dia] = dataISO.split("-");
     return `${dia}/${mes}/${ano}`;
 }
+
+// Tornar funções globais
+window.resetarFormulario = resetarFormulario;
+window.devolverLivro = devolverLivro;
+window.autorizarReserva = autorizarReserva;
+window.darBaixaReserva = darBaixaReserva;
