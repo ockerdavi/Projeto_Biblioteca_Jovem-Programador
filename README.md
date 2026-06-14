@@ -24,13 +24,13 @@
 
 ## 📌 Visão Geral
 
->Aplicação prática focada na automatização e organização de fluxos de uma biblioteca (CRUD de livros, cadastro de utilizadores e controlo rigoroso de empréstimos/devoluções). >Desenvolvido com o objetivo de consolidar conceitos de lógica de programação, arquitetura de software e design responsivo durante a formação tecnológica do programa Jovem Programador em >Santa Catarina.
+>Aplicação prática focada na automatização e organização de fluxos de uma biblioteca (CRUD de livros, cadastro de utilizadores e controlo rigoroso de empréstimos/devoluções). Desenvolvido com o objetivo de consolidar conceitos de lógica de programação, arquitetura de software e design responsivo durante a formação tecnológica do programa Jovem Programador em Santa Catarina.
 
 ---
 
 ## 🎯 Objetivo
 
->Desenvolver uma aplicação web capaz de organizar e automatizar processos comuns de bibliotecas escolares, facilitando o gerenciamento do acervo e o acompanhamento dos empréstimos >realizados.
+>Desenvolver uma aplicação web capaz de organizar e automatizar processos comuns de bibliotecas escolares, facilitando o gerenciamento do acervo e o acompanhamento dos empréstimos realizados.
 
 ---
 
@@ -92,7 +92,7 @@ Guilherme | Desenvolvimento Frontend |equipe 3|
 
 ### 1. Clonar o repositório
 ```bash
-git clone <REPO_URL>
+git clone https://github.com/ockerdavi/Projeto_Biblioteca_Jovem-Programador.git
 ````
 ### 2. Acessar a pasta do diretório
 ```bash
