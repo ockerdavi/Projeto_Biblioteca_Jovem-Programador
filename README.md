@@ -1,12 +1,14 @@
+
+<p align="center">
+  <img src="assets/banner.png.png"/>
+</p>
+
 # 📚 Biblioteca Jovem Programador
 
 <p align="center">
   Sistema web completo para gestão de biblioteca escolar com controle de livros, clientes e empréstimos.
 </p>
 
-<p align="center">
-  <img src="assets/images/banner.png" width="800"/>
-</p>
 
 ---
 
@@ -106,25 +108,11 @@ http://localhost:8080
 
 ---
 
-## 🖥️ Interface do Sistema
-
-### Tela de Login
-<p align="center">
-  <img src="assets/images/login.png" width="700"/>
-</p>
-
-### Página Inicial
-<p align="center">
-  <img src="assets/images/home.png" width="700"/>
-</p>
-
----
-
 ## 🧠 Arquitetura do Projeto
 
 ```text
 src/
-├── config/        # Configurações da aplicação
+├── config/        # Configurações da aplicação e mapeamento das capas
 ├── controller/    # Endpoints REST
 ├── dto/           # Objetos de transferência de dados
 ├── model/         # Entidades do sistema
