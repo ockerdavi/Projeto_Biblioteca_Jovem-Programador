@@ -357,6 +357,7 @@ body {
     }
 
     .library-art {
+        display: none;
         min-height: clamp(230px, 65vw, 360px);
         width: 100%;
     }
