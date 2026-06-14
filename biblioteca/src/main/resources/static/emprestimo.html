@@ -17,6 +17,15 @@
             <span id="badge-total" class="badge">Emprestimos - 0 registros</span>
         </div>
 
+        <nav class="top-actions">
+            <a href="./livros.html" class="nav-button">Livros</a>
+            <a href="./cliente.html" class="nav-button">Clientes</a>
+            <a href="./emprestimo.html" class="nav-button">Empréstimos</a>
+            <a href="./devolucao.html" class="nav-button">Devoluções</a>
+            <a href="./login.html" class="nav-button nav-danger">Sair</a>
+            
+        </nav>
+
         <!-- Formulario de registro de emprestimo -->
         <section class="card">
             <h2 id="titulo-form">Registrar Emprestimo</h2>
@@ -58,7 +67,8 @@
 
                 <div class="button-container full-width">
                     <button type="submit" id="btn-salvar" class="btn-save">Registrar Emprestimo</button>
-                    <button type="button" id="btn-limpar" class="btn-cancel" onclick="resetarFormulario()">Limpar</button>
+                    <button type="button" id="btn-limpar" class="btn-cancel"
+                        onclick="resetarFormulario()">Limpar</button>
                 </div>
             </form>
         </section>
@@ -83,7 +93,9 @@
                         </tr>
                     </thead>
                     <tbody id="tabela-emprestimos-body">
-                        <tr><td colspan="10" class="text-center">Carregando...</td></tr>
+                        <tr>
+                            <td colspan="10" class="text-center">Carregando...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

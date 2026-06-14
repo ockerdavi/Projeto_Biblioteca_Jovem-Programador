@@ -29,7 +29,7 @@ body {
     width: 95%;
     max-width: 1400px;
     margin: 0 auto;
-    padding-top: 40px;
+    padding-top: 90px;
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -50,6 +50,19 @@ body {
     flex-wrap: wrap;
     justify-content: flex-end;
 }
+
+.top-actions {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+
 
 .nav-button {
     background-color: var(--bg-card);

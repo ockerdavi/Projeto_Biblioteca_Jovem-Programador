@@ -22,11 +22,40 @@ body {
     padding-bottom: 50px;
 }
 
+.top-actions {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.nav-button {
+    background-color: var(--bg-card);
+    color: var(--text-dark);
+    border: 1px solid rgba(19, 56, 44, 0.22);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-danger {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+
 .container {
     width: 95%;
     max-width: 1400px;
     margin: 0 auto;
-    padding-top: 40px;
+    padding-top: 90px;
     display: flex;
     flex-direction: column;
     gap: 30px;
