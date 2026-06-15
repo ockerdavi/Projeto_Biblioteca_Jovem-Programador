@@ -15,17 +15,22 @@ public class Emprestimo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+    
     @ManyToOne
     @JoinColumn(name = "livro_id")
     private Livro livro;
+    
     private LocalDate dataEmprestimo;
     private LocalDate dataPrevistaEntrega;
     private LocalDate dataEntrega;
     private Integer diasPermitidos;
     private String status;
     private BigDecimal multa;
-    private BigDecimal valorMultaDiaria;
+    
+    @Column(name = "valor_multa_diaria")
+    private BigDecimal valorMultaDiaria; // Pode ser null (usa o valor do livro)
 }

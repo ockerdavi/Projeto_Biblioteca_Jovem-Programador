@@ -2,6 +2,7 @@ package br.com.escola.biblioteca.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "livros")
@@ -32,4 +33,7 @@ public class Livro {
     
     @Column(name = "capa_url")
     private String capaUrl; // Caminho da imagem da capa
+    
+    @Column(name = "valor_multa_diaria")
+    private BigDecimal valorMultaDiaria = new BigDecimal("2.00"); // Valor padrão da multa
 }

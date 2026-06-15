@@ -2,6 +2,8 @@ package br.com.escola.biblioteca.controller;
 
 import br.com.escola.biblioteca.model.Cliente;
 import br.com.escola.biblioteca.service.ClienteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 /*Importa anotações do Spring para criar endpoints com a REST */
 import jakarta.validation.Valid;
@@ -13,16 +15,25 @@ import java.util.List;
 /* Vai permitir requisições de qualquer origem */
 
 public class ClienteController {
-    
+    private static final Logger logger = LoggerFactory.getLogger(ClienteController.class);
+
     private final ClienteService service;
-    
+
     public ClienteController(ClienteService service) {
         this.service = service;
     }
     
     @PostMapping
     public Cliente salvar(@Valid @RequestBody Cliente cliente) {
-        return service.salvar(cliente);
+        logger.info("[API] Recebendo cadastro de cliente: email={} cpf={}", cliente.getEmail(), cliente.getCpf());
+        try {
+            Cliente salvo = service.salvar(cliente);
+            logger.info("[API] Cliente salvo id={} email={}", salvo.getId(), salvo.getEmail());
+            return salvo;
+        } catch (RuntimeException ex) {
+            logger.warn("[API] Erro ao salvar cliente: {}", ex.getMessage());
+            throw ex;
+        }
     /*POST: recebe um Cliente no corpo da requisição e salva */
     }
     
@@ -61,5 +72,26 @@ public class ClienteController {
     public List<Cliente> listarAtivos() {
         return service.listarAtivos();
     /*GET: mostra os clientes que estão com o cadastro ativo */
+    }
+
+    @PostMapping("/login")
+    public Cliente login(@RequestBody java.util.Map<String, String> payload) {
+        String email = payload.get("email");
+        String senha = payload.get("senha");
+        logger.info("[API] Tentativa de login: email={}", email);
+        try {
+            Cliente c = service.autenticar(email, senha);
+            logger.info("[API] Login bem-sucedido: id={} email={}", c.getId(), c.getEmail());
+            return c;
+        } catch (RuntimeException ex) {
+            logger.warn("[API] Falha no login para email={}: {}", email, ex.getMessage());
+            throw ex;
+        }
+    }
+
+    // Método de diagnóstico: expor todos os clientes (útil em dev)
+    @GetMapping("/all")
+    public List<Cliente> listarTodosDebug() {
+        return service.findAll();
     }
 }

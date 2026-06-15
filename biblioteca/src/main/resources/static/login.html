@@ -3,126 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Biblioteca</title>
+    <title>Login - Biblioteca</title>
     <link rel="stylesheet" href="./css/login.css">
 </head>
 <body>
 
+   
     <main class="login-page">
-        <!-- Cabecalho da tela de acesso -->
-        <section class="login-hero">
+        <section class="login-hero" aria-hidden="true">
             <div class="hero-copy">
-                <span class="hero-kicker">Sistema Biblioteca</span>
-                <h1>Biblioteca Jovem Programador</h1>
-                <p>Acesse livros, clientes e operacoes da biblioteca em uma interface moderna e segura.</p>
+                <div class="hero-kicker">Biblioteca</div>
+                <h1>Bem-vindo à Biblioteca</h1>
+                <p>Área de acesso — entre ou cadastre-se para utilizar os serviços.</p>
             </div>
-
-            <!-- Arte 3D decorativa feita em CSS para manter o projeto sem imagens externas -->
-            <div class="library-art" aria-hidden="true">
-                <div class="scene-grid"></div>
-                <div class="holo-ring ring-one"></div>
-                <div class="holo-ring ring-two"></div>
-                <div class="book-3d">
-                    <div class="book-face book-front">
-                        <span></span>
-                        <strong>JP</strong>
-                        <small>LIBRARY</small>
-                    </div>
-                    <div class="book-face book-side"></div>
-                    <div class="book-face book-pages"></div>
-                </div>
-                <div class="data-panel panel-one">
-                    <strong>Acervo</strong>
-                    <span>+1200 titulos</span>
-                </div>
-                <div class="data-panel panel-two">
-                    <strong>Acesso</strong>
-                    <span>Aluno | Bibliotecario</span>
-                </div>
-                <div class="light-beam"></div>
-            </div>
+            <div class="library-art" aria-hidden="true"></div>
         </section>
 
-        <!-- Area principal com formularios de login e cadastro -->
         <section class="auth-card">
             <div class="tab-group">
-                <button type="button" id="tab-login" class="tab-button active" onclick="mostrarAba('login')">Entrar</button>
-                <button type="button" id="tab-cadastro" class="tab-button" onclick="mostrarAba('cadastro')">Cadastrar</button>
+                <button id="tab-login" class="tab-button active" type="button" onclick="mostrarAba('login')">Login</button>
+                <button id="tab-cadastro" class="tab-button" type="button" onclick="mostrarAba('cadastro')">Cadastro</button>
             </div>
 
-            <!-- Formulario de login: o perfil vem do cadastro salvo, nao da escolha do usuario -->
             <form id="form-login" class="auth-form">
                 <h2>Entrar</h2>
-
                 <div class="input-group">
                     <label for="login-email">Email</label>
-                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="email" id="login-email" required>
                 </div>
-
                 <div class="input-group">
                     <label for="login-senha">Senha</label>
-                    <input type="password" id="login-senha" placeholder="Senha" required>
+                    <input type="password" id="login-senha" required>
                 </div>
-
                 <div class="input-group">
-                    <label for="login-perfil">Entrar como</label>
-                    <select id="login-perfil" required>
-                        <option value="ALUNO">Cliente</option>
-                        <option value="BIBLIOTECARIO">Bibliotecario</option>
+                    <label for="login-perfil">Perfil</label>
+                    <select id="login-perfil">
+                        <option value="ALUNO">Aluno</option>
+                        <option value="BIBLIOTECARIO">Bibliotecário</option>
                     </select>
                 </div>
-
                 <div id="grupo-modulo-bibliotecario" class="input-group hidden">
-                    <label for="login-modulo">Modulo do bibliotecario</label>
+                    <label for="login-modulo">Módulo (bibliotecário)</label>
                     <select id="login-modulo">
-                        <option value="cliente.html">Clientes</option>
-                        <option value="livros.html">Livros</option>
+                        <option value="cliente.html">Clientes (Dashboard)</option>
+                        <option value="livros.html">Livros (Gerenciar acervo)</option>
                     </select>
                 </div>
-
-                <button type="submit" class="btn-save">Entrar</button>
+                <div class="button-container">
+                    <button type="submit" class="btn-save">Entrar</button>
+                </div>
             </form>
 
-            <!-- Formulario de cadastro: bibliotecario exige codigo institucional -->
             <form id="form-cadastro" class="auth-form hidden">
-                <h2>Criar conta</h2>
-
+                <h2>Cadastrar</h2>
                 <div class="input-group">
                     <label for="cadastro-nome">Nome completo</label>
-                    <input type="text" id="cadastro-nome" placeholder="Nome completo" required>
+                    <input type="text" id="cadastro-nome" required>
                 </div>
-
                 <div class="input-group">
                     <label for="cadastro-email">Email</label>
-                    <input type="email" id="cadastro-email" placeholder="Email" required>
+                    <input type="email" id="cadastro-email" required>
                 </div>
-
+                <div class="input-group">
+                    <label for="cadastro-cpf">CPF</label>
+                    <input type="text" id="cadastro-cpf" required placeholder="000.000.000-00">
+                </div>
                 <div class="input-group">
                     <label for="cadastro-whatsapp">WhatsApp</label>
-                    <input type="text" id="cadastro-whatsapp" placeholder="WhatsApp para notificacoes">
+                    <input type="text" id="cadastro-whatsapp">
                 </div>
-
                 <div class="input-group">
-                    <label for="cadastro-instituicao">Instituicao</label>
-                    <input type="text" id="cadastro-instituicao" placeholder="Nome da instituicao" required>
+                    <label for="cadastro-instituicao">Instituição</label>
+                    <input type="text" id="cadastro-instituicao">
                 </div>
-
                 <div class="input-group">
                     <label for="cadastro-senha">Senha</label>
-                    <input type="password" id="cadastro-senha" placeholder="Senha" required minlength="4">
+                    <input type="password" id="cadastro-senha" required>
                 </div>
-
                 <div class="input-group">
                     <label for="cadastro-perfil">Perfil</label>
-                    <select id="cadastro-perfil" required>
+                    <select id="cadastro-perfil">
                         <option value="ALUNO">Aluno</option>
-                        <option value="BIBLIOTECARIO">Bibliotecario</option>
+                        <option value="BIBLIOTECARIO">Bibliotecário</option>
                     </select>
                 </div>
-
                 <div id="grupo-codigo-bibliotecario" class="input-group hidden">
-                    <label for="codigo-bibliotecario">Codigo gerado pelo usuario master</label>
-                    <input type="password" id="codigo-bibliotecario" placeholder="Codigo master">
+                    <label for="codigo-bibliotecario">Código bibliotecário</label>
+                    <input type="text" id="codigo-bibliotecario">
                 </div>
 
 
@@ -131,6 +98,8 @@
         </section>
     </main>
 
+    <script src="./js/login-ui.js"></script>
     <script src="./js/login.js"></script>
+    <script src="./js/nav.js"></script>
 </body>
 </html>

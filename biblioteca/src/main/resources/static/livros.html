@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Biblioteca</title>
     <link rel="stylesheet" href="./css/livros.css">
 </head>
+
 <body>
 
     <nav class="top-actions">
         <a href="./livros.html" class="nav-button">Livros</a>
-        <a href="./cliente.html" class="nav-button">Alunos</a>
-        <a href="./login.html" class="nav-button">Login</a>
-        <button type="button" class="nav-button nav-danger" onclick="fecharTela()">Fechar</button>
+        <a href="./cliente.html" class="nav-button">Clientes</a>
+        <a href="./emprestimo.html" class="nav-button">Empréstimos</a>
+        <a href="./devolucao.html" class="nav-button">Devoluções</a>
+        <a href="./login.html" class="nav-button nav-danger">Sair</a>
+        
     </nav>
 
     <main class="container">
@@ -22,14 +26,37 @@
         </div>
 
         <section id="area-notificacoes-aluno" class="card hidden">
-            <h2>Minhas notificacoes</h2>
+            <h2>🔔 Minhas Notificações</h2>
             <ul id="lista-notificacoes-aluno" class="notification-list"></ul>
         </section>
 
+        <section id="area-meus-emprestimos" class="card hidden">
+            <h2>📖 Meus Empréstimos e Reservas</h2>
+            <div class="table-container">
+                <table class="books-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-left">LIVRO</th>
+                            <th class="text-center">STATUS</th>
+                            <th class="text-center">DATA EMPRÉSTIMO</th>
+                            <th class="text-center">PREVISÃO ENTREGA</th>
+                            <th class="text-center">MULTA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-meus-emprestimos-body">
+                        <tr>
+                            <td colspan="6" class="text-center">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section id="area-busca-aluno" class="card hidden">
-            <h2>Pesquisar Livro</h2>
+            <h2>🔍 Pesquisar Livro</h2>
             <div class="input-group full-width">
-                <label for="busca-livro">Titulo, autor ou categoria</label>
+                <label for="busca-livro">Título, autor ou categoria</label>
                 <input type="text" id="busca-livro" placeholder="Pesquisar livro para reservar">
             </div>
         </section>
@@ -40,28 +67,34 @@
                 <input type="hidden" id="livro-id">
 
                 <div class="input-group full-width">
-                    <label for="titulo">Título</label>
+                    <label for="titulo">Título *</label>
                     <input type="text" id="titulo" placeholder="Título" required>
                 </div>
-                
+
                 <div class="input-group">
-                    <label for="isbn">ISBN</label>
+                    <label for="isbn">ISBN *</label>
                     <input type="text" id="isbn" placeholder="ISBN" required>
                 </div>
-                
+
                 <div class="input-group">
-                    <label for="autor">Autor</label>
+                    <label for="autor">Autor *</label>
                     <input type="text" id="autor" placeholder="Autor" required>
                 </div>
-                
+
                 <div class="input-group">
-                    <label for="categoria">Categoria</label>
+                    <label for="categoria">Categoria *</label>
                     <input type="text" id="categoria" placeholder="Categoria" required>
                 </div>
-                
+
                 <div class="input-group">
-                    <label for="quantidade">Quantidade</label>
+                    <label for="quantidade">Quantidade *</label>
                     <input type="number" id="quantidade" placeholder="Quantidade" required min="1">
+                </div>
+
+                <div class="input-group">
+                    <label for="valorMulta">Valor Multa Diária (R$)</label>
+                    <input type="number" id="valorMulta" step="0.01" min="0" placeholder="2.00">
+                    <small>Deixe em branco para usar o padrão (R$ 2,00)</small>
                 </div>
 
                 <div class="input-group full-width">
@@ -72,13 +105,14 @@
 
                 <div class="button-container full-width">
                     <button type="submit" id="btn-salvar" class="btn-save">Salvar</button>
-                    <button type="button" id="btn-cancelar" class="btn-cancel" onclick="resetarFormulario()" style="display: none;">Cancelar</button>
+                    <button type="button" id="btn-cancelar" class="btn-cancel" onclick="resetarFormulario()"
+                        style="display: none;">Cancelar</button>
                 </div>
             </form>
         </section>
 
         <section id="area-reservas-bibliotecario" class="card hidden">
-            <h2>Reservas dos Alunos</h2>
+            <h2>📋 Reservas dos Alunos</h2>
             <div class="table-container">
                 <table class="books-table">
                     <thead>
@@ -88,7 +122,8 @@
                             <th class="text-left">LIVRO</th>
                             <th class="text-center">STATUS</th>
                             <th class="text-center">VALIDADE</th>
-                            <th class="text-center">ACOES</th>
+                            <th class="text-center">MULTA DIÁRIA</th>
+                            <th class="text-center">AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody id="tabela-reservas-body">
@@ -97,39 +132,55 @@
             </div>
         </section>
 
+        <!-- Seção de Livros em Cards -->
         <section class="card">
-            <h2>Livros</h2>
-            <div class="table-container">
-                <table id="tabela-livros" class="books-table">
-                    <thead>
-                        <tr>
-                            <th class="text-center">ID</th>
-                            <th class="text-left">TÍTULO</th>
-                            <th class="text-center">DISPONÍVEIS</th>
-                            <th class="text-center">ALUGADOS</th>
-                            <th class="text-center">AÇÕES</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Os livros serão carregados aqui via JavaScript -->
-                    </tbody>
-                </table>
+            <h2>📚 Catálogo de Livros</h2>
+            <div id="cards-container" class="cards-container">
+                <!-- Os livros serão carregados aqui via JavaScript em formato de cards -->
             </div>
         </section>
     </main>
 
+    <!-- Modal Popup para detalhes do livro -->
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Detalhes do Livro</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-image" src="" alt="Capa do livro">
+                </div>
+                <div class="modal-info">
+                    <p><strong class="info-label">Título:</strong> <span id="modal-titulo"></span></p>
+                    <p><strong class="info-label">Autor:</strong> <span id="modal-autor"></span></p>
+                    <p><strong class="info-label">ISBN:</strong> <span id="modal-isbn"></span></p>
+                    <p><strong class="info-label">Categoria:</strong> <span id="modal-categoria"></span></p>
+                    <p><strong class="info-label">Quantidade Total:</strong> <span id="modal-quantidade"></span></p>
+                    <p><strong class="info-label">Disponíveis:</strong> <span id="modal-disponiveis"></span></p>
+                    <p><strong class="info-label">Alugados:</strong> <span id="modal-alugados"></span></p>
+                    <p><strong class="info-label">Multa Diária:</strong> <span id="modal-multa"></span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-close" onclick="fecharModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="./js/livros.js"></script>
     <script src="./js/nav.js"></script>
-    
+
     <script>
         // Função para preview da imagem
         function previewImagem(input) {
             const preview = document.getElementById('preview-capa');
             preview.innerHTML = '';
-            
+
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.style.maxWidth = '150px';
@@ -142,7 +193,7 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-        
+
         // Função para resetar o formulário
         function resetarFormulario() {
             document.getElementById('form-livro').reset();
@@ -150,20 +201,21 @@
             document.getElementById('titulo-form').textContent = 'Cadastrar Livro';
             document.getElementById('btn-salvar').textContent = 'Salvar';
             document.getElementById('btn-cancelar').style.display = 'none';
-            
-            // Limpar preview da imagem
+
             const preview = document.getElementById('preview-capa');
             if (preview) {
                 preview.innerHTML = '';
             }
         }
-        
-        // Função para fechar a tela
-        function fecharTela() {
-            if (confirm('Deseja realmente fechar a aplicação?')) {
-                window.close();
+
+        // Função para sair do sistema
+        function sairDoSistema() {
+            if (confirm('Deseja realmente sair do sistema?')) {
+                localStorage.removeItem('biblioteca_usuario_logado');
+                window.location.href = './login.html';
             }
         }
     </script>
 </body>
+
 </html>
