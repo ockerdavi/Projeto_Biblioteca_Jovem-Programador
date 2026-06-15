@@ -22,11 +22,14 @@ body {
     padding-bottom: 50px;
 }
 
+
+
+
 .container { 
     width: 95%; 
     max-width: 1400px; 
     margin: 0 auto; 
-    padding-top: 40px; 
+    padding-top: 90px; 
     display: flex; 
     flex-direction: column; 
     gap: 30px;

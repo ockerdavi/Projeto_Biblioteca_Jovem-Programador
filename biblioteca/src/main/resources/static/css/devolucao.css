@@ -8,27 +8,80 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg-main: #113328;
+    --bg-card: #eadeba;
+    --bg-input: #dccba0;
+    --text-dark: #113328;
+    --text-muted: #8c826e;
+    --color-danger: #9e3d3d;
+    --color-edit: #556b2f;
+}
+
 body {
-    background-color: #113328;
-    /* Verde escuro do fundo */
+    background-color: var(--bg-main);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #1a332a;
-    padding: 30px;
+    color: var(--text-dark);
     min-height: 100vh;
+    padding-bottom: 50px;
 }
 
 .container-principal {
     max-width: 1200px;
     margin: 0 auto;
+
+    padding: 80px 10px; /* Espaço para o menu fixo */
+}
+
+/* ================= MENU FIXO (copiado do livros.css) ================= */
+.top-actions {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.nav-button {
+    background-color: var(--bg-card);
+    color: var(--text-dark);
+    border: 1px solid rgba(19, 56, 44, 0.22);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-button:hover {
+    background-color: var(--text-dark);
+    color: var(--bg-card);
+}
+
+.nav-danger {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+.nav-danger:hover {
+    background-color: #7a2f2f;
+    color: #fff;
 }
 
 /* ================= HEADER ================= */
+
 .cabecalho-sistema {
     max-width: 1200px;
     margin: 0 auto 30px auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: 90px;
 }
 
 .titulo-container {
@@ -39,15 +92,14 @@ body {
 
 .titulo-principal {
     font-family: 'Playfair Display', serif;
-    color: #eadeba;
-    /* Creme/Bege do texto */
+    color: var(--bg-card);
     font-size: 2.2rem;
     font-weight: 500;
 }
 
 .badge-registros {
     background-color: rgba(234, 222, 186, 0.15);
-    color: #eadeba;
+    color: var(--bg-card);
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -56,8 +108,8 @@ body {
 
 .btn-voltar {
     background-color: transparent;
-    color: #eadeba;
-    border: 1px solid #eadeba;
+    color: var(--bg-card);
+    border: 1px solid var(--bg-card);
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
@@ -67,14 +119,13 @@ body {
 }
 
 .btn-voltar:hover {
-    background-color: #eadeba;
-    color: #113328;
+    background-color: var(--bg-card);
+    color: var(--bg-main);
 }
 
 /* ================= CARDS (BEGE) ================= */
 .card-estilizado {
-    background-color: #eadeba;
-    /* Cor de fundo idêntica ao design */
+    background-color: var(--bg-card);
     border-radius: 20px;
     padding: 40px;
     margin-bottom: 30px;
@@ -83,7 +134,7 @@ body {
 
 .card-titulo {
     font-family: 'Playfair Display', serif;
-    color: #113328;
+    color: var(--text-dark);
     font-size: 1.5rem;
     font-weight: 500;
     margin-bottom: 30px;
@@ -93,8 +144,6 @@ body {
 .linha-form {
     display: flex;
     flex-direction: row;
-    width: auto;
-
     gap: 20px;
     margin-bottom: 20px;
 }
@@ -113,24 +162,21 @@ body {
 .grupo-input label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #8c826e;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-/* O efeito visual exato dos inputs do design original */
 .grupo-input input,
 .grupo-input select {
-    background-color: #dccba0;
-    /* Tom mais escuro para o efeito de afundamento */
+    background-color: var(--bg-input);
     border: none;
     border-radius: 12px;
     padding: 16px 20px;
     font-size: 1rem;
-    color: #113328;
+    color: var(--text-dark);
     font-family: 'Plus Jakarta Sans', sans-serif;
     box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.08);
-    /* Sombra interna */
     outline: none;
 }
 
@@ -139,8 +185,8 @@ body {
 }
 
 .btn-acao-principal {
-    background-color: #113328;
-    color: #eadeba;
+    background-color: var(--text-dark);
+    color: var(--bg-card);
     border: none;
     width: 100%;
     padding: 18px;
@@ -169,7 +215,7 @@ body {
 
 .tabela-dados th {
     font-size: 0.75rem;
-    color: #8c826e;
+    color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
     padding: 10px 15px;
@@ -179,20 +225,19 @@ body {
 .tabela-dados td {
     padding: 15px;
     font-size: 0.95rem;
-    color: #113328;
+    color: var(--text-dark);
     border-bottom: 1px solid rgba(17, 51, 40, 0.05);
 }
 
 .valor-multa {
-    color: #a83232;
-    /* Cor vermelha para destacar o valor da multa */
+    color: var(--color-danger);
     font-weight: 600;
 }
 
 .btn-texto {
     background-color: transparent;
-    color: #113328;
-    border: 1px solid #113328;
+    color: var(--text-dark);
+    border: 1px solid var(--text-dark);
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
@@ -202,19 +247,69 @@ body {
 }
 
 .btn-texto:hover {
-    background-color: #113328;
-    color: #eadeba;
+    background-color: var(--text-dark);
+    color: var(--bg-card);
 }
 
-/* Responsividade Básica */
+/* ================= RESPONSIVIDADE ================= */
 @media (max-width: 768px) {
     .linha-form {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
-
+    
     .cabecalho-sistema {
-        display: flex;
         flex-direction: column;
         gap: 20px;
+        text-align: center;
+    }
+    
+    .titulo-container {
+        flex-direction: column;
+    }
+    
+    .card-estilizado {
+        padding: 25px;
+    }
+    
+    .container-principal {
+        padding-top: 100px;
+    }
+    
+    .top-actions {
+        top: 10px;
+        right: 10px;
+        gap: 5px;
+    }
+    
+    .nav-button {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+    
+    /* Tabela responsiva */
+    .tabela-dados th,
+    .tabela-dados td {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .btn-texto {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tabela-dados {
+        font-size: 0.7rem;
+    }
+    
+    .tabela-dados th,
+    .tabela-dados td {
+        padding: 8px 4px;
+    }
+    
+    .btn-texto {
+        white-space: nowrap;
     }
 }
