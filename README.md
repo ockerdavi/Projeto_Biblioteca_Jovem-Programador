@@ -36,7 +36,7 @@
 
 ## 🛠️ Tecnologias Utilizadas
 
-- Java 21
+- Java 
 - Spring Boot (API REST)
 - MySQL
 - HTML5
